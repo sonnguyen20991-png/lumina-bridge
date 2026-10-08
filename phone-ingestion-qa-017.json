@@ -1,0 +1,27 @@
+{
+  "idempotency_key": "phone-ingestion-qa-017",
+  "filename": "phone-ingestion-qa-017.json",
+  "source_name": "Lumina Phone QA",
+  "rows": [
+    {
+      "source_record_id": "PHONE-QA-017",
+      "full_name": "Lumina Phone Test Seventeen",
+      "first_name": "Lumina",
+      "last_name": "Phone Test Seventeen",
+      "current_title": "Sales Director",
+      "department": "Sales",
+      "seniority": "Director",
+      "email": "lumina.phone.test.017@example.com",
+
+      "ContactPhone1": "+65 8123 9284",
+      "ContactPhone2": "+65 6123 9284",
+
+      "company_name": "Lumina Phone QA Company 017",
+      "company_domain": "lumina-phone-company-017.com",
+      "company_website": "https://lumina-phone-company-017.com",
+      "company_linkedin_url": "https://www.linkedin.com/company/lumina-phone-company-017",
+
+      "CompanyPhone1": "+65 6555 9284"
+    }
+  ]
+}

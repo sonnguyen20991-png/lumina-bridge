@@ -1,0 +1,19 @@
+{
+  "idempotency_key": "suppression-email-qa-001",
+  "filename": "suppression-email-qa-001.json",
+  "source_name": "Lumina Suppression QA",
+  "rows": [
+    {
+      "source_record_id": "SUPPRESSION-EMAIL-001",
+      "full_name": "THIS PERSON MUST NOT BE CREATED",
+      "first_name": "Blocked",
+      "last_name": "Suppression QA",
+      "current_title": "THIS TITLE MUST NOT BE CREATED",
+      "email": "lumina.suppression.email.928471@example.com",
+      "company_name": "THIS COMPANY MUST NOT BE CREATED",
+      "company_domain": "suppression-company-928471.com",
+      "company_website": "https://suppression-company-928471.com",
+      "company_linkedin_url": "https://www.linkedin.com/company/suppression-company-928471"
+    }
+  ]
+}

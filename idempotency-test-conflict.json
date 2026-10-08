@@ -1,0 +1,12 @@
+{
+  "idempotency_key": "lumina-qa-idempotency-001",
+  "filename": "idempotency-test-conflict.json",
+  "source_name": "Lumina QA",
+  "rows": [
+    {
+      "source_record_id": "idem-999",
+      "full_name": "Different Person",
+      "email": "different.person@lumina-test.example"
+    }
+  ]
+}

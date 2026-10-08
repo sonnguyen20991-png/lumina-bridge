@@ -1,0 +1,15 @@
+{
+  "idempotency_key": "conflict-b2-001",
+  "filename": "conflict-b2.json",
+  "source_name": "Lumina Conflict QA 2",
+  "rows": [
+    {
+      "source_record_id": "CONFLICT-B2",
+      "full_name": "Lumina Conflict Beta Two",
+      "first_name": "Lumina",
+      "last_name": "Beta Two",
+      "current_title": "Beta Two Original",
+      "email": "lumina.beta.two.928471@example.com"
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+{"status":"ok","import_job_id":"49485b5f-edf5-4be5-a22d-0fad80804e29","summary":{"total":1,"inserted":0,"updated":1,"duplicates":0,"rejected":0,"conflicts":0,"suppressed":0},"rows":[{"row_number":1,"status":"updated","person_id":"3de019be-7e9b-4f75-b43e-41c916c18707","match_type":"email","field_policy":{},"has_field_conflict":false}]}

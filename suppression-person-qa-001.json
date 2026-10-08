@@ -1,0 +1,13 @@
+{
+  "idempotency_key": "suppression-person-qa-001",
+  "filename": "suppression-person-qa-001.json",
+  "source_name": "Lumina Concurrency QA",
+  "rows": [
+    {
+      "source_record_id": "CONCURRENCY-QA-001",
+      "full_name": "THIS NAME MUST NOT APPLY",
+      "current_title": "THIS TITLE MUST NOT APPLY",
+      "email": "lumina.concurrent.test.928471@example.com"
+    }
+  ]
+}

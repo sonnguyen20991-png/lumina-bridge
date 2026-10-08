@@ -1,0 +1,13 @@
+{
+  "idempotency_key": "source-identity-test-002",
+  "filename": "source-identity-002.json",
+  "source_name": "Lumina Source QA",
+  "rows": [
+    {
+      "source_record_id": "CRM-1001",
+      "current_title": "VP Sales",
+      "department": "Sales",
+      "seniority": "VP"
+    }
+  ]
+}

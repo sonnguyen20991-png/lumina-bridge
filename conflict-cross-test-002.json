@@ -1,0 +1,14 @@
+{
+  "idempotency_key": "conflict-cross-test-002",
+  "filename": "conflict-cross-test-002.json",
+  "source_name": "Lumina Conflict QA",
+  "rows": [
+    {
+      "source_record_id": "CONFLICT-X2",
+      "full_name": "SHOULD NOT OVERWRITE ANYONE",
+      "current_title": "SHOULD NOT APPLY",
+      "linkedin_url": "https://www.linkedin.com/in/lumina-conflict-alpha-001",
+      "email": "lumina.conflict.beta@example.com"
+    }
+  ]
+}

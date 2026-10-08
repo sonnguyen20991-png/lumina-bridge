@@ -1,0 +1,19 @@
+{
+  "idempotency_key": "rev12-reporting-matched-002",
+  "source_name": "Revision12 QA Low",
+  "filename": "rev12-reporting-matched-002.json",
+  "rows": [
+    {
+      "source_record_id": "REV12-REPORTING-MATCHED-002",
+      "full_name": "Lumina Reporting Null QA",
+      "first_name": "Lumina",
+      "last_name": "Reporting Null QA",
+      "current_title": "Account Manager",
+      "department": "Sales",
+      "seniority": "Manager",
+      "email": "rev12.reporting.null.20260924@lumina-qa.test",
+      "contact_city": "Singapore",
+      "contact_country": "Singapore"
+    }
+  ]
+}

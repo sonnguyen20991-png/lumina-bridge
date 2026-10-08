@@ -1,0 +1,19 @@
+{
+  "idempotency_key": "rev12-import-e2e-low-001",
+  "source_name": "Revision12 QA Low",
+  "filename": "rev12-import-e2e-low-001.json",
+  "rows": [
+    {
+      "source_record_id": "REV12-E2E-LOW-001",
+      "full_name": "Lumina Revision Twelve Import QA",
+      "first_name": "Lumina",
+      "last_name": "Import QA",
+      "current_title": "Sales Manager",
+      "department": "Sales",
+      "seniority": "Manager",
+      "email": "rev12.e2e.20260924@lumina-qa.test",
+      "contact_city": "Singapore",
+      "contact_country": "Singapore"
+    }
+  ]
+}

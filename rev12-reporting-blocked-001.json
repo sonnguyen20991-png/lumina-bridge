@@ -1,0 +1,19 @@
+{
+  "idempotency_key": "rev12-reporting-blocked-001",
+  "source_name": "Revision12 QA Low",
+  "filename": "rev12-reporting-blocked-001.json",
+  "rows": [
+    {
+      "source_record_id": "REV12-REPORTING-BLOCKED-001",
+      "full_name": "Lumina Reporting Null QA",
+      "first_name": "Lumina",
+      "last_name": "Reporting Null QA",
+      "current_title": "Account Executive",
+      "department": "Business Development",
+      "seniority": "Associate",
+      "email": "rev12.reporting.null.20260924@lumina-qa.test",
+      "contact_city": "Singapore",
+      "contact_country": "Singapore"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "idempotency_key": "company-conflict-001",
+  "filename": "company-conflict-001.json",
+  "source_name": "Lumina Company Conflict QA",
+  "rows": [
+    {
+      "source_record_id": "COMPANY-CONFLICT-001",
+      "full_name": "Lumina Company Conflict Test",
+      "first_name": "Lumina",
+      "last_name": "Company Conflict Test",
+      "current_title": "Director",
+      "email": "lumina.company.conflict.928471@example.com",
+      "company_name": "THIS COMPANY MUST NOT BE CREATED",
+      "company_domain": "northstar-lumina-928471.com",
+      "company_linkedin_url": "https://www.linkedin.com/company/nova-lumina-928471"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "idempotency_key": "company-qa-002",
+  "filename": "company-qa-002.json",
+  "source_name": "Lumina Company QA",
+  "rows": [
+    {
+      "source_record_id": "COMPANY-QA-002",
+      "full_name": "Lumina Company Test Two",
+      "first_name": "Lumina",
+      "last_name": "Company Test Two",
+      "current_title": "VP Partnerships",
+      "department": "Partnerships",
+      "seniority": "VP",
+      "email": "lumina.company.test.two.928471@example.com",
+      "company_name": "NORTHSTAR LUMINA QA PTE LTD",
+      "company_domain": "HTTPS://WWW.NORTHSTAR-LUMINA-928471.COM/",
+      "company_website": "https://www.northstar-lumina-928471.com/",
+      "company_linkedin_url": "https://www.linkedin.com/company/northstar-lumina-928471/",
+      "company_industry": "Technology",
+      "company_city": "Singapore",
+      "company_country": "Singapore"
+    }
+  ]
+}

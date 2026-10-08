@@ -1,0 +1,11 @@
+{
+  "idempotency_key": "phone-ingestion-qa-019",
+  "filename": "phone-ingestion-qa-019.json",
+  "source_name": "Lumina Phone QA",
+  "rows": [
+    {
+      "source_record_id": "PHONE-QA-017",
+      "ContactPhone2": "+65 9123 9284"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "idempotency_key": "rev12-import-protected-block-001",
+  "source_name": "Revision12 QA High",
+  "filename": "rev12-import-protected-block-001.json",
+  "rows": [
+    {
+      "source_record_id": "REV12-PROTECTED-BLOCK-001",
+      "full_name": "Lumina Revision Twelve Manual QA",
+      "first_name": "Lumina",
+      "last_name": "Manual QA",
+      "department": "Enterprise Sales",
+      "email": "rev12.manual.20260924@lumina-qa.test",
+      "contact_city": "Singapore",
+      "contact_country": "Singapore"
+    }
+  ]
+}

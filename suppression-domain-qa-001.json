@@ -1,0 +1,19 @@
+{
+  "idempotency_key": "suppression-domain-qa-001",
+  "filename": "suppression-domain-qa-001.json",
+  "source_name": "Lumina Suppression QA",
+  "rows": [
+    {
+      "source_record_id": "SUPPRESSION-DOMAIN-001",
+      "full_name": "DOMAIN BLOCKED PERSON MUST NOT EXIST",
+      "first_name": "Domain",
+      "last_name": "Blocked QA",
+      "current_title": "Blocked Director",
+      "email": "domain.blocked.person.928471@example.com",
+      "company_name": "DOMAIN BLOCKED COMPANY MUST NOT EXIST",
+      "company_domain": "HTTPS://WWW.LUMINA-SUPPRESSED-DOMAIN-928471.COM/",
+      "company_website": "https://www.lumina-suppressed-domain-928471.com/",
+      "company_linkedin_url": "https://www.linkedin.com/company/domain-blocked-company-928471"
+    }
+  ]
+}

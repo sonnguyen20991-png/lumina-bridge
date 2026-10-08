@@ -1,0 +1,15 @@
+{
+  "idempotency_key": "suppression-client-scope-002",
+  "filename": "suppression-client-scope-002.json",
+  "source_name": "Lumina Client Scope QA",
+  "rows": [
+    {
+      "source_record_id": "CLIENT-SCOPE-002",
+      "full_name": "Lumina Client Scope Allowed",
+      "first_name": "Lumina",
+      "last_name": "Client Scope Allowed",
+      "current_title": "Scope QA Manager",
+      "email": "client.scope.blocked.928471@example.com"
+    }
+  ]
+}

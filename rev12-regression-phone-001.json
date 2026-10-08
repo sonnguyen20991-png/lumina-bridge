@@ -1,0 +1,18 @@
+{
+  "idempotency_key": "rev12-regression-phone-001",
+  "source_name": "Revision12 Regression Phone",
+  "filename": "rev12-regression-phone-001.json",
+  "rows": [
+    {
+      "source_record_id": "REV12-REG-PHONE-001",
+      "full_name": "Lumina Revision Twelve Phone Regression",
+      "first_name": "Lumina",
+      "last_name": "Phone Regression",
+      "email": "rev12.reg.phone.20260924@lumina-qa.test",
+      "contact_phone_1": "+84 901 777 301",
+      "contact_phone_2": "+84 901 777 302",
+      "contact_city": "Singapore",
+      "contact_country": "Singapore"
+    }
+  ]
+}

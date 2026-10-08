@@ -1,0 +1,18 @@
+{
+  "idempotency_key": "phone-ingestion-qa-018",
+  "filename": "phone-ingestion-qa-018.json",
+  "source_name": "Lumina Phone QA",
+  "rows": [
+    {
+      "source_record_id": "PHONE-QA-017",
+
+      "ContactPhone1": "65-8123-9284",
+      "ContactPhone2": "(65) 6123 9284",
+
+      "company_name": "Lumina Phone QA Company 017",
+      "company_domain": "https://www.lumina-phone-company-017.com/",
+
+      "CompanyPhone1": "+65-6555-9284"
+    }
+  ]
+}

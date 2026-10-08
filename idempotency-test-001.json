@@ -1,0 +1,19 @@
+{
+  "idempotency_key": "lumina-qa-idempotency-001",
+  "filename": "idempotency-test-001.json",
+  "source_name": "Lumina QA",
+  "rows": [
+    {
+      "source_record_id": "idem-001",
+      "full_name": "Lumina Idempotency QA 001",
+      "first_name": "Lumina",
+      "last_name": "Idempotency QA 001",
+      "current_title": "VP Revenue Operations",
+      "department": "Revenue Operations",
+      "seniority": "VP",
+      "contact_city": "Singapore",
+      "contact_country": "Singapore",
+      "email": "idempotency.qa001@lumina-test.example"
+    }
+  ]
+}

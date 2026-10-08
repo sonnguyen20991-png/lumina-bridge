@@ -1,0 +1,20 @@
+{
+  "idempotency_key": "company-job-change-001",
+  "filename": "company-job-change-001.json",
+  "source_name": "Lumina Company QA",
+  "rows": [
+    {
+      "source_record_id": "COMPANY-QA-001",
+      "current_title": "Regional VP Sales",
+      "department": "Sales",
+      "seniority": "VP",
+      "company_name": "Nova Lumina QA",
+      "company_domain": "nova-lumina-928471.com",
+      "company_website": "https://nova-lumina-928471.com",
+      "company_linkedin_url": "https://www.linkedin.com/company/nova-lumina-928471",
+      "company_industry": "Cloud Infrastructure",
+      "company_city": "Singapore",
+      "company_country": "Singapore"
+    }
+  ]
+}

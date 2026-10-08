@@ -1,0 +1,18 @@
+{
+  "idempotency_key": "conflict-person-b-001",
+  "filename": "conflict-person-b.json",
+  "source_name": "Lumina Conflict QA",
+  "rows": [
+    {
+      "source_record_id": "CONFLICT-B",
+      "full_name": "Conflict Test Beta",
+      "first_name": "Conflict",
+      "last_name": "Beta",
+      "current_title": "Beta Original Title",
+      "department": "Operations",
+      "seniority": "Director",
+      "contact_country": "Vietnam",
+      "email": "lumina.conflict.beta@example.com"
+    }
+  ]
+}

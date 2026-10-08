@@ -1,0 +1,16 @@
+{
+  "idempotency_key": "rev12-regression-identity-001",
+  "source_name": "Revision12 Regression Identity",
+  "filename": "rev12-regression-identity-001.json",
+  "rows": [
+    {
+      "source_record_id": "REV12-REG-IDENTITY-001",
+      "full_name": "Lumina Revision Twelve Phone Regression",
+      "first_name": "Lumina",
+      "last_name": "Phone Regression",
+      "email": "rev12.reg.phone.20260924@lumina-qa.test",
+      "contact_city": "Singapore",
+      "contact_country": "Singapore"
+    }
+  ]
+}

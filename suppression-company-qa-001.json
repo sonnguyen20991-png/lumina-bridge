@@ -1,0 +1,19 @@
+{
+  "idempotency_key": "suppression-company-qa-001",
+  "filename": "suppression-company-qa-001.json",
+  "source_name": "Lumina Suppression QA",
+  "rows": [
+    {
+      "source_record_id": "SUPPRESSION-COMPANY-001",
+      "full_name": "COMPANY BLOCKED PERSON MUST NOT EXIST",
+      "first_name": "Company",
+      "last_name": "Blocked QA",
+      "current_title": "VP Sales",
+      "email": "company.blocked.person.928471@example.com",
+      "company_name": "Nova Lumina QA",
+      "company_domain": "HTTPS://WWW.NOVA-LUMINA-928471.COM/",
+      "company_website": "https://www.nova-lumina-928471.com/",
+      "company_linkedin_url": "https://www.linkedin.com/company/nova-lumina-928471/"
+    }
+  ]
+}

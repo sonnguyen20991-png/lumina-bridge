@@ -1,0 +1,16 @@
+{
+  "idempotency_key": "suppression-phone-qa-001",
+  "filename": "suppression-phone-qa-001.json",
+  "source_name": "Lumina Suppression QA",
+  "rows": [
+    {
+      "source_record_id": "SUPPRESSION-PHONE-001",
+      "full_name": "PHONE BLOCKED PERSON MUST NOT EXIST",
+      "first_name": "Phone",
+      "last_name": "Blocked QA",
+      "current_title": "Phone QA Director",
+      "email": "phone.blocked.person.928471@example.com",
+      "contact_phone_1": "+1-415-555-9284"
+    }
+  ]
+}

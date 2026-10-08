@@ -1,0 +1,18 @@
+{
+  "idempotency_key": "conflict-person-a-001",
+  "filename": "conflict-person-a.json",
+  "source_name": "Lumina Conflict QA",
+  "rows": [
+    {
+      "source_record_id": "CONFLICT-A",
+      "full_name": "Conflict Test Alpha",
+      "first_name": "Conflict",
+      "last_name": "Alpha",
+      "current_title": "Alpha Original Title",
+      "department": "Sales",
+      "seniority": "Director",
+      "contact_country": "Singapore",
+      "linkedin_url": "https://www.linkedin.com/in/lumina-conflict-alpha-001"
+    }
+  ]
+}

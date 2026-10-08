@@ -1,0 +1,19 @@
+{
+  "name": "lumina-bridge",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@google-cloud/cloud-sql-connector": "^1.8.0",
+    "csv-parse": "^7.0.3",
+    "exceljs": "^4.4.0",
+    "express": "^5.1.0",
+    "multer": "^2.4.0",
+    "pg": "^8.16.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

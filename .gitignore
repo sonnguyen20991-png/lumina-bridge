@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*credentials*.json
+*secret*.json
+
+# Logs / runtime noise
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+
+# Local and historical backups
+local-backups/
+backup-before-*/
+frontend-backup-before-*/
+frontend-dist.before-*/
+
+*.bak
+*.backup-*
+*.before-*
+*.rev*-before-*
+
+# Transfer archives
+lumina-bridge-transfer-*.tar.gz
+*.tgz
+
+# Editor / OS
+.vscode/
+.idea/
+Thumbs.db
+
+# Generated QA outputs
+qa/results/

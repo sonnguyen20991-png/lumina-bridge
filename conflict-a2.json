@@ -1,0 +1,15 @@
+{
+  "idempotency_key": "conflict-a2-001",
+  "filename": "conflict-a2.json",
+  "source_name": "Lumina Conflict QA 2",
+  "rows": [
+    {
+      "source_record_id": "CONFLICT-A2",
+      "full_name": "Lumina Conflict Alpha Two",
+      "first_name": "Lumina",
+      "last_name": "Alpha Two",
+      "current_title": "Alpha Two Original",
+      "linkedin_url": "https://www.linkedin.com/in/lumina-conflict-alpha-two-928471"
+    }
+  ]
+}
