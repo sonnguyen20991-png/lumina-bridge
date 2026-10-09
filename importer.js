@@ -10,6 +10,7 @@ import { findSuppression, recordSuppressionHit } from './suppression-resolver.js
 import { upsertPhones } from './phone-resolver.js';
 import { evaluatePersonFieldPolicies } from './person-field-policy.js';
 import { findAndStoreDuplicateCandidates } from './duplicate-candidate.js';
+import { persistSynchronousImportFailure } from './import-failure.js';
 
 export function registerImportRoutes(app, pool) {
   function text(value, max = 1000) {
@@ -3177,59 +3178,14 @@ export function registerImportRoutes(app, pool) {
         try {
           await client.query('BEGIN');
 
-          const failedJob =
-            await client.query(
-              `
-                UPDATE import_jobs
-                SET
-                  status = 'failed',
-                  completed_at = NOW(),
-                  result_summary = $2::jsonb
-                WHERE id = $1
-                RETURNING id
-              `,
-              [
-                importJobId,
-                JSON.stringify({
-                  status: 'failed',
-                  code: 'IMPORT_FAILED',
-                  error_code:
-                    error?.code || null
-                })
-              ]
-            );
-
-          if (failedJob.rowCount === 1) {
-            await client.query(
-              `
-                INSERT INTO audit_events (
-                  actor,
-                  action,
-                  entity_type,
-                  entity_id,
-                  client_id,
-                  details
-                )
-                VALUES (
-                  'lumina-bridge',
-                  'import.failed',
-                  'import_job',
-                  $1,
-                  $2,
-                  $3::jsonb
-                )
-              `,
-              [
-                importJobId,
-                clientId,
-                JSON.stringify({
-                  code: 'IMPORT_FAILED',
-                  error_code:
-                    error?.code || null
-                })
-              ]
-            );
-          }
+          await persistSynchronousImportFailure(
+            client,
+            {
+              importJobId,
+              clientId,
+              errorCode: error?.code || null
+            }
+          );
 
           await client.query('COMMIT');
         } catch (failureRecordError) {
