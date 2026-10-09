@@ -11,6 +11,7 @@ import { upsertPhones } from './phone-resolver.js';
 import { evaluatePersonFieldPolicies } from './person-field-policy.js';
 import { findAndStoreDuplicateCandidates } from './duplicate-candidate.js';
 import { persistSynchronousImportFailure } from './import-failure.js';
+import { buildImportJobDiagnostics, readImportJobDetails } from './import-job-diagnostics.js';
 
 export function registerImportRoutes(app, pool) {
   function text(value, max = 1000) {
@@ -3474,43 +3475,21 @@ export function registerImportRoutes(app, pool) {
         });
       }
 
-      const result = await pool.query(
-        `
-          SELECT
-            id,
-            client_id,
-            filename,
-            source_name,
-            status,
-            total_rows,
-            processed_rows,
-            inserted_rows,
-            updated_rows,
-            matched_rows,
-            duplicate_rows,
-            rejected_rows,
-            conflict_rows,
-            suppressed_rows,
-            started_at,
-            completed_at,
-            metadata,
-            result_summary,
-            created_at
-          FROM import_jobs
-          WHERE id = $1
-          LIMIT 1
-        `,
-        [importJobId]
-      );
+      const details =
+        await readImportJobDetails(
+          pool,
+          importJobId,
+          req.auth.clientId
+        );
 
-      if (result.rowCount !== 1) {
+      if (!details) {
         return res.status(404).json({
           status: 'error',
           code: 'IMPORT_JOB_NOT_FOUND'
         });
       }
 
-      const job = result.rows[0];
+      const job = details.job;
       const total = Number(job.total_rows);
       const processed = Number(job.processed_rows);
 
@@ -3547,7 +3526,10 @@ export function registerImportRoutes(app, pool) {
                   )
                 )
               : 0
-        }
+        },
+        diagnostics:
+          buildImportJobDiagnostics(job),
+        events: details.events
       });
     }
   );
