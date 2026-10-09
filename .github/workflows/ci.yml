@@ -46,4 +46,4 @@ jobs:
         run: |
           test -f frontend-dist/index.html
           test -f frontend-dist/assets/app-5229a0f0d3c0.css
-          test -f frontend-dist/assets/app-7866c0ddc472-csvux5.js
+          test -f frontend-dist/assets/app-7866c0ddc472-csvux6.js
