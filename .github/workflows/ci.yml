@@ -42,8 +42,22 @@ jobs:
           node --check company-resolver.js
           node --check suppression-resolver.js
 
-      - name: Verify frontend build files
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+
+      - name: Verify frontend deployment package
         run: |
           test -f frontend-dist/index.html
-          test -f frontend-dist/assets/app-5229a0f0d3c0.css
-          test -f frontend-dist/assets/app-7866c0ddc472-csvux9.js
+
+          css_count=$(find frontend-dist/assets -maxdepth 1 -type f -name 'index-*.css' | wc -l)
+          js_count=$(find frontend-dist/assets -maxdepth 1 -type f -name 'index-*.js' | wc -l)
+
+          test "$css_count" -eq 1
+          test "$js_count" -eq 1
+
+          diff -rq frontend/dist frontend-dist

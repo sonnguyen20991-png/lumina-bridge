@@ -10,7 +10,7 @@ export function registerFrontend(app) {
   // /api/v1 IAP verification and membership authorization. No auth changes.
   app.use('/app',(_req,res,next)=>{res.set('X-Content-Type-Options','nosniff');res.set('Referrer-Policy','same-origin');next();},express.static(root,{
     dotfiles:'deny',index:'index.html',fallthrough:false,
-    setHeaders(res,path){res.setHeader('Cache-Control',/\/assets\/app-[0-9a-f]+\.(js|css)$/.test(path)?'public, max-age=31536000, immutable':'no-store');},
+    setHeaders(res,path){res.setHeader('Cache-Control',/\/assets\/(?:app-|index-)[A-Za-z0-9_-]+\.(js|css)$/.test(path)?'public, max-age=31536000, immutable':'no-store');},
   }));
   app.use('/app',(error,_req,res,_next)=>{
     const status=[400,403,404].includes(error.status)?error.status:500;

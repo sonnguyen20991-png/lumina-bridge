@@ -41,3 +41,6 @@ Thumbs.db
 
 # Generated QA outputs
 qa/results/
+
+# Frontend build output
+frontend/dist/
