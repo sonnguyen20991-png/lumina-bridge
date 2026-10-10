@@ -3,6 +3,7 @@ import {canWrite,useSession} from '../components/Session';
 import {ApiError} from '../services/gate1Api';
 import {completionLabel,importApi,readPending,terminal,validateFile,type ImportJob,type PendingImport} from '../services/importApi';
 import {ConflictReview} from './ConflictReview';
+import {ImportReview} from './ImportReview';
 import {requireUuid} from '../services/query';
 const button='px-5 py-3 rounded-xl border border-[#27272a] text-sm text-white disabled:opacity-40 hover:bg-[#18181b]';
 const primary=button+' bg-indigo-600 border-indigo-500 hover:bg-indigo-500';
@@ -10,9 +11,10 @@ const input='block w-full mt-2 bg-[#111114] border border-[#27272a] rounded-xl p
 const panel='p-6 md:p-8 rounded-2xl border border-[#1c1c1f] bg-[#0d0d0f]';
 const message=(e:unknown)=>e instanceof Error?e.message:'Import request failed.';
 async function fingerprint(file:File) {return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',await file.arrayBuffer()))).map(x=>x.toString(16).padStart(2,'0')).join('');}
-export function Imports({onOpenSearch}:{onOpenSearch:()=>void}) {
+export function Imports({onOpenLists}:{onOpenLists:()=>void}) {
   const session=useSession();
-  const [reviewJob,setReviewJob]=useState<string|null>(null);
+  const [contactReviewJob,setContactReviewJob]=useState<string|null>(null);
+  const [conflictReviewJob,setConflictReviewJob]=useState<string|null>(null);
   const storageKey=`lumina.import.v1.${session.principal_id}.${session.client_id}`;
   const [pending,setPending]=useState<PendingImport|null>(()=>readPending(localStorage,storageKey));
   const [file,setFile]=useState<File|null>(null);
@@ -57,6 +59,31 @@ export function Imports({onOpenSearch}:{onOpenSearch:()=>void}) {
     catch(e){if(mounted.current)setError(message(e));}
     finally{lock.current=false;if(mounted.current)setBusy(false);}
   }
+  async function retryImport() {
+    if(lock.current)return;
+    const id=pending?.jobId||job?.id;
+    if(!id||!job?.diagnostics?.retryable)return;
+
+    lock.current=true;
+    setBusy(true);
+    setError('');
+
+    try {
+      await importApi.retryJob(id);
+      const value=await importApi.getJob(id,session.client_id);
+
+      if(mounted.current){
+        setJob(value);
+        setAuto(!terminal(value.status));
+      }
+    } catch(e) {
+      if(mounted.current)setError(message(e));
+    } finally {
+      lock.current=false;
+      if(mounted.current)setBusy(false);
+    }
+  }
+
   async function submit() {
     if(lock.current||!writable||!file)return;
     lock.current=true;setBusy(true);setError('');setSafeToDiscard(false);
@@ -106,9 +133,22 @@ export function Imports({onOpenSearch}:{onOpenSearch:()=>void}) {
   const shownJob=job&&(!pending?.jobId||job.id===pending.jobId)?job:null;
   const mapping=shownJob?.metadata?.file_import?.header_mapping||pending?.mapping||[];
   const progress=shownJob?(shownJob.total_rows?Math.round(shownJob.processed_rows/shownJob.total_rows*100):0):0;
-  if(reviewJob)return <ConflictReview jobId={reviewJob} onBack={()=>setReviewJob(null)}/>;
+  if(contactReviewJob)return (
+    <ImportReview
+      jobId={contactReviewJob}
+      onBack={()=>setContactReviewJob(null)}
+      onOpenLists={onOpenLists}
+    />
+  );
+
+  if(conflictReviewJob)return (
+    <ConflictReview
+      jobId={conflictReviewJob}
+      onBack={()=>setConflictReviewJob(null)}
+    />
+  );
   return <div className="space-y-7 max-w-5xl">
-    <header><p className="text-xs tracking-widest uppercase text-indigo-400 mb-3">Database / Import</p><h1 className="text-3xl font-bold text-white">Import contacts</h1><p className="mt-3 text-sm text-[#a1a1aa]">Upload a CSV or XLSX, follow processing, then find your contacts in Target Builder.</p></header>
+    <header><p className="text-xs tracking-widest uppercase text-indigo-400 mb-3">Database / Import</p><h1 className="text-3xl font-bold text-white">Import contacts</h1><p className="mt-3 text-sm text-[#a1a1aa]">Upload a CSV or XLSX, follow processing, then review the contacts and outcomes from this upload.</p></header>
     {error&&<div role="alert" className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-sm text-rose-200">{error}</div>}
     {!writable&&<p className="text-sm text-amber-200">Your role can inspect jobs but cannot upload contacts.</p>}
     <section className={panel+' space-y-5'} aria-labelledby="upload-heading">
@@ -123,12 +163,39 @@ export function Imports({onOpenSearch}:{onOpenSearch:()=>void}) {
     {activeId&&<section className={panel+' space-y-5'} aria-labelledby="job-heading">
       <div className="flex flex-wrap justify-between items-start gap-4"><div><h2 id="job-heading" className="text-lg font-semibold text-white">{shownJob?completionLabel(shownJob):'Checking import status…'}</h2><p className="text-xs text-[#71717a] font-mono mt-2 break-all">{activeId}</p></div><button className={button} disabled={busy} onClick={()=>void refresh()}>Refresh Status</button></div>
       {shownJob&&<><div role="status" aria-live="polite" className="text-sm text-[#a1a1aa]">{shownJob.processed_rows} of {shownJob.total_rows} rows processed · {progress}%</div><progress className="w-full h-2 accent-indigo-500" value={shownJob.processed_rows} max={shownJob.total_rows||1} aria-label="Import progress"/>
-      <dl className="grid grid-cols-2 md:grid-cols-3 gap-3">{[['Inserted',shownJob.inserted_rows],['Updated',shownJob.updated_rows],['Duplicates',shownJob.duplicate_rows],['Rejected',shownJob.rejected_rows],['Suppressed',shownJob.suppressed_rows],['Rows with conflicts at import',shownJob.conflict_rows]].map(([label,count])=><div key={label} className="p-4 bg-[#111114] rounded-xl border border-[#1c1c1f]"><dt className="text-xs text-[#71717a]">{label}</dt><dd className="mt-2 text-2xl font-semibold text-white tabular-nums">{count}</dd></div>)}</dl>
+      <dl className="grid grid-cols-2 md:grid-cols-3 gap-3">{[['Inserted',shownJob.inserted_rows],['Updated',shownJob.updated_rows],['Matched',shownJob.matched_rows],['Duplicates',shownJob.duplicate_rows],['Rejected',shownJob.rejected_rows],['Suppressed',shownJob.suppressed_rows],['Rows with conflicts at import',shownJob.conflict_rows]].map(([label,count])=><div key={label} className="p-4 bg-[#111114] rounded-xl border border-[#1c1c1f]"><dt className="text-xs text-[#71717a]">{label}</dt><dd className="mt-2 text-2xl font-semibold text-white tabular-nums">{count}</dd></div>)}</dl>
       <p className="text-xs text-[#71717a]">Conflict counts overlap inserted or updated rows; do not add them to the total. Conflicts can involve company fields.</p>
+      {shownJob.diagnostics&&<section className="lumina-import-diagnostics p-4 rounded-xl border border-[#27272a] bg-[#111114] space-y-3" aria-labelledby="import-diagnostics-heading">
+        <h3 id="import-diagnostics-heading" className="text-sm font-semibold text-white">Import diagnostics</h3>
+        <dl className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+          <div><dt className="text-xs text-[#71717a]">Processing mode</dt><dd className="mt-1 text-white">{shownJob.diagnostics.async?'Background':'Synchronous'}</dd></div>
+          <div><dt className="text-xs text-[#71717a]">Retryable</dt><dd className="mt-1 text-white">{shownJob.diagnostics.retryable?'Yes':'No'}</dd></div>
+          <div><dt className="text-xs text-[#71717a]">Retry count</dt><dd className="mt-1 text-white tabular-nums">{shownJob.diagnostics.retry_count??'—'}</dd></div>
+          <div><dt className="text-xs text-[#71717a]">Failure code</dt><dd className="mt-1 text-white font-mono text-xs break-all">{shownJob.diagnostics.failure_code||'—'}</dd></div>
+          <div><dt className="text-xs text-[#71717a]">Error code</dt><dd className="mt-1 text-white font-mono text-xs break-all">{shownJob.diagnostics.error_code||'—'}</dd></div>
+        </dl>
+
+        {shownJob.diagnostics.legacy_failure&&<p className="text-sm text-amber-200">This is a legacy failed import. Detailed failure information was not recorded for this historical job.</p>}
+
+        {shownJob.diagnostics.retryable&&<button className={primary} disabled={busy} onClick={()=>void retryImport()}>{busy?'Retrying…':'Retry import'}</button>}
+
+        {Array.isArray(shownJob.events)&&shownJob.events.length>0&&<details className="pt-2">
+          <summary className="cursor-pointer text-sm text-indigo-300">Lifecycle events ({shownJob.events.length})</summary>
+          <div className="mt-3 space-y-2">
+            {shownJob.events.map((event,index)=><div className="p-3 rounded-lg border border-[#1c1c1f] bg-[#0d0d10]" key={`${event.action}-${event.created_at||index}-${index}`}>
+              <div className="flex flex-wrap justify-between gap-2">
+                <span className="font-mono text-xs text-indigo-300">{event.action}</span>
+                <span className="text-xs text-[#71717a]">{event.created_at?new Date(event.created_at).toLocaleString():'—'}</span>
+              </div>
+              <pre className="mt-2 text-xs text-[#a1a1aa] whitespace-pre-wrap break-words overflow-x-auto">{JSON.stringify(event.details??{},null,2)}</pre>
+            </div>)}
+          </div>
+        </details>}
+      </section>}
       {shownJob.rejected_rows>0&&<p className="text-sm text-amber-200">{shownJob.rejected_rows} rows were rejected. A completed job does not mean every contact was saved. Review the source headers and import evidence before resubmitting.</p>}
       {shownJob.conflict_rows>0&&<p className="text-sm text-amber-200">{shownJob.conflict_rows} rows had conflicts during this import. This historical count stays unchanged after review. Review the conflict records before deciding which company values to retain.</p>}
-      {shownJob.conflict_rows>0&&<button className={button} onClick={()=>setReviewJob(shownJob.id)}>Review conflicts</button>}
-      {terminal(shownJob.status)&&<div className="flex gap-3 flex-wrap"><button className={primary} onClick={onOpenSearch}>Find imported contacts</button><button className={button} disabled={busy} onClick={newImport}>Start another import</button></div>}</>}
+      {shownJob.conflict_rows>0&&<button className={button} onClick={()=>setConflictReviewJob(shownJob.id)}>Review conflicts</button>}
+      {terminal(shownJob.status)&&<div className="flex gap-3 flex-wrap">{shownJob.status==='completed'&&shownJob.inserted_rows+shownJob.updated_rows+shownJob.matched_rows>0&&<button className={primary} onClick={()=>setContactReviewJob(shownJob.id)}>Review imported contacts</button>}<button className={button} disabled={busy} onClick={newImport}>Start another import</button></div>}</>}
     </section>}
     {mapping.length>0&&<section className={panel}><h2 className="text-lg font-semibold text-white mb-4">Header mapping used</h2><p className="text-xs text-[#71717a] mb-4">Reported by the backend after upload. This is not a pre-import mapping preview.</p><div className="overflow-x-auto"><table className="w-full text-left text-sm"><thead><tr className="text-[#71717a]"><th scope="col" className="py-3">File column</th><th scope="col">Mapped field</th></tr></thead><tbody>{mapping.map((m,i)=><tr key={`${m.original}-${i}`} className="border-t border-[#1c1c1f]"><td className="py-3 pr-4">{m.original}</td><td className="text-indigo-300 font-mono text-xs">{m.target}</td></tr>)}</tbody></table></div><p className="text-xs text-amber-200 mt-4">A mapped header does not guarantee its field is supported by every import stage. Verify contact details after processing.</p></section>}
     {!pending&&<section className={panel+' space-y-4'}><h2 className="text-lg font-semibold text-white">Check an existing job</h2><label className="block text-sm">Import job ID<input className={input} value={jobInput} onChange={e=>setJobInput(e.target.value)} placeholder="Paste an import job UUID" disabled={busy}/></label><button className={button} disabled={busy||!jobInput.trim()} onClick={()=>void openJob()}>Check Job</button></section>}
