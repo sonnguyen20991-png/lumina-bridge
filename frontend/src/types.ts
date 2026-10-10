@@ -1,4 +1,4 @@
-export type View = 'builder' | 'lists' | 'home' | 'contacts' | 'companies' | 'campaigns' | 'clients' | 'import' | 'review' | 'settings' | 'audit';
+export type View = 'builder' | 'home' | 'lists' | 'contacts' | 'clients' | 'campaigns' | 'import' | 'settings';
 export type Query = { q: string; filters: Record<string, string> };
 export interface Gate1Session { principal_id: string; email: string; client_id: string; client_name: string; role: string; provider: string }
 export interface ClientOption { id: string; name: string; role: string }

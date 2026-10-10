@@ -8,15 +8,31 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { View } from './types';
 import { SessionGate } from './components/Session';
 
+const ROUTES: View[] = [
+  'builder',
+  'home',
+  'lists',
+  'contacts',
+  'clients',
+  'campaigns',
+  'import',
+  'settings',
+];
+
+function viewFromHash(hash: string): View {
+  const candidate = hash.replace(/^#/, '') as View;
+  return ROUTES.includes(candidate) ? candidate : 'builder';
+}
+
 export default function App() {
-  const [currentView, setCurrentView] = useState<View>(() => window.location.hash === '#import' ? 'import' : window.location.hash === '#lists' ? 'lists' : 'builder');
+  const [currentView, setCurrentView] = useState<View>(() => viewFromHash(window.location.hash));
   const navigate = (view: View) => { setCurrentView(view); window.history.replaceState(null,'',`#${view}`); };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
-        setCurrentView('builder');
+        navigate('builder');
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -34,12 +50,12 @@ export default function App() {
   };
 
   return (
-    <div className="flex h-screen bg-[#09090b] text-[#e2e2e2] font-sans overflow-hidden selection:bg-indigo-500/30">
+    <div className={`lumina-shell lumina-view-${currentView} flex h-screen bg-[#09090b] text-[#e2e2e2] font-sans overflow-hidden selection:bg-indigo-500/30`}>
       <Sidebar activeView={currentView} onViewChange={navigate} />
       
-      <main className="flex-1 flex flex-col min-w-0 relative">
-        <div className="flex-1 overflow-auto">
-          <div className="max-w-[1400px] mx-auto px-8 py-10">
+      <main className="lumina-main flex-1 flex flex-col min-w-0 relative">
+        <div className="lumina-scroll flex-1 overflow-auto">
+          <div className="lumina-workspace max-w-[1400px] mx-auto px-8 py-10">
             <ErrorBoundary key={currentView} name={currentView}>
               <SessionGate>{renderView()}</SessionGate>
             </ErrorBoundary>

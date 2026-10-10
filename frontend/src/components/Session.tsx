@@ -32,5 +32,5 @@ export function SessionGate({children}: {children:React.ReactNode}) {
     <button disabled={busy || (clients.length>0&&!chosen)} onClick={()=>{if(clients.length>0)setClientContext(chosen);void verify();}} className="px-8 py-3 bg-white text-black text-xs font-bold uppercase tracking-widest rounded-xl disabled:opacity-30">{clients.length ? 'Open Client' : 'Retry Connection'}</button>
     <a href="/app/" className="block text-sm text-indigo-400">Reload to sign in</a>
   </div>;
-  return <SessionContext.Provider value={session}><div className="mb-8 flex flex-wrap gap-3 items-center text-xs text-[#71717a] border-b border-[#1c1c1f] pb-4"><span className="text-emerald-400">Authenticated</span><span>{session.client_name}</span><span className="ml-auto">{session.email}</span><span>{session.role}</span></div>{children}</SessionContext.Provider>;
+  return <SessionContext.Provider value={session}><div className="lumina-sessionbar mb-8 flex flex-wrap gap-3 items-center text-xs text-[#71717a] border-b border-[#1c1c1f] pb-4"><span className="lumina-session-status text-emerald-400">Authenticated</span><span>{session.client_name}</span><span className="lumina-session-email ml-auto">{session.email}</span><span>{session.role}</span></div>{children}</SessionContext.Provider>;
 }
