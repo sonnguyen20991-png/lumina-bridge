@@ -91,3 +91,35 @@ export interface CampaignSummary {
   created_at?: string;
   created_by?: string;
 }
+
+export interface CampaignParticipant {
+  person_id: string;
+  full_name: string;
+  current_title?: string | null;
+  contact_country?: string | null;
+  stage?: string | null;
+  status?: string | null;
+  note?: string | null;
+  first_contacted_at?: string | null;
+  last_contacted_at?: string | null;
+  version: string;
+}
+
+export interface CampaignHistoryRecord {
+  campaign_name: string;
+  stage?: string | null;
+  participation_status?: string | null;
+  note?: string | null;
+}
+
+export interface CampaignEvent {
+  id: string;
+  created_at: string;
+  campaign_name: string;
+  action: string;
+  actor: string;
+  details: {
+    before?: Record<string, unknown>;
+    after?: Record<string, unknown>;
+  };
+}

@@ -1,4 +1,18 @@
-import type { CampaignSummary, ClientOption, ContactIntelligence, Gate1Response, Gate1Session, InterpretData, List, Person, Query, SavedTarget } from '../types';
+import type {
+  CampaignEvent,
+  CampaignHistoryRecord,
+  CampaignParticipant,
+  CampaignSummary,
+  ClientOption,
+  ContactIntelligence,
+  Gate1Response,
+  Gate1Session,
+  InterpretData,
+  List,
+  Person,
+  Query,
+  SavedTarget,
+} from '../types';
 import { normalizeQuery, requireUuid } from './query';
 
 let clientContext = '';
@@ -47,6 +61,60 @@ export const gate1Api = {
   saveTarget: (data: {name:string;original_input:string;interpreted_query:Query}) => request<SavedTarget>('/saved-targets',{method:'POST',body:JSON.stringify({...data,interpreted_query:normalizeQuery(data.interpreted_query)})}),
   getLists: () => request<List[]>('/lists'),
   getCampaigns: () => request<CampaignSummary[]>('/campaigns'),
+
+  createCampaign: (data: { id: string; name: string }) =>
+    request<CampaignSummary>('/campaigns', {
+      method: 'POST',
+      body: JSON.stringify({
+        id: requireUuid(data.id),
+        name: data.name,
+      }),
+    }),
+
+  getCampaignParticipants: (campaignId: string, offset = 0) =>
+    request<CampaignParticipant[]>(
+      `/campaigns/${requireUuid(campaignId)}/participants?offset=${offset}`,
+    ),
+
+  importListToCampaign: (campaignId: string, listId: string) =>
+    request<{ added: number }>(
+      `/campaigns/${requireUuid(campaignId)}/import-list`,
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          list_id: requireUuid(listId),
+        }),
+      },
+    ),
+
+  updateCampaignParticipant: (
+    campaignId: string,
+    personId: string,
+    data: {
+      stage: string;
+      status: string;
+      note: string;
+      first_contacted_at?: string | null;
+      last_contacted_at?: string | null;
+      expected_updated_at: string;
+    },
+  ) =>
+    request<CampaignParticipant>(
+      `/campaigns/${requireUuid(campaignId)}/participants/${requireUuid(personId)}`,
+      {
+        method: 'POST',
+        body: JSON.stringify(data),
+      },
+    ),
+
+  getCampaignHistory: (personId: string) =>
+    request<CampaignHistoryRecord[]>(
+      `/people/${requireUuid(personId)}/campaign-history`,
+    ) as Promise<
+      Gate1Response<CampaignHistoryRecord[]> & {
+        events?: CampaignEvent[];
+      }
+    >,
   createListFromSelection: (data: {name:string;person_ids:string[];original_input:string;interpreted_query:Query}) => request<List>('/lists/from-selection',{method:'POST',body:JSON.stringify({...data,person_ids:data.person_ids.map(requireUuid),interpreted_query:normalizeQuery(data.interpreted_query)})}),
   getListMembers: (id: string, limit=50, offset=0) => request<Person[]>(`/lists/${requireUuid(id)}/members?limit=${limit}&offset=${offset}`),
 };
