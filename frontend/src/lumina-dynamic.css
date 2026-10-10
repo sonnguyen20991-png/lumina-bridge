@@ -4354,3 +4354,683 @@ div[class*="bg-[#111114]"][class*="rounded-2xl"] label:hover {
     text-align: center;
   }
 }
+
+
+/* =========================================================
+   PREMIUM INTELLIGENCE WORKSPACE — V2
+   Higher contrast, stronger hierarchy, sharper data surfaces
+   ========================================================= */
+
+:root {
+  --lumina-ink: #27324a;
+  --lumina-ink-strong: #111827;
+  --lumina-muted: #475569;
+  --lumina-muted-soft: #64748b;
+
+  --lumina-canvas: #f4f6fa;
+  --lumina-canvas-warm: #f8fafc;
+
+  --lumina-surface: rgba(255,255,255,0.97);
+  --lumina-surface-solid: #ffffff;
+  --lumina-surface-soft: #f8fafc;
+
+  --lumina-border: rgba(30,41,59,0.13);
+  --lumina-border-strong: rgba(30,41,59,0.22);
+
+  --lumina-indigo: #5146e5;
+  --lumina-indigo-strong: #4338ca;
+  --lumina-violet: #6d4bd1;
+  --lumina-cyan: #0891b2;
+
+  --lumina-shadow-sm:
+    0 1px 2px rgba(15,23,42,0.04),
+    0 5px 16px rgba(15,23,42,0.045);
+
+  --lumina-shadow-md:
+    0 12px 32px rgba(15,23,42,0.075),
+    0 2px 8px rgba(15,23,42,0.04);
+
+  --lumina-shadow-lg:
+    0 24px 64px rgba(15,23,42,0.10);
+}
+
+
+/* ---------- GLOBAL WORKSPACE ---------- */
+
+.lumina-main {
+  color: var(--lumina-ink);
+}
+
+.lumina-workspace {
+  max-width: 1440px !important;
+}
+
+.lumina-view-builder .lumina-main,
+.lumina-view-contacts .lumina-main,
+.lumina-view-lists .lumina-main,
+.lumina-view-home .lumina-main,
+.lumina-view-campaigns .lumina-main,
+.lumina-view-clients .lumina-main,
+.lumina-view-import .lumina-main,
+.lumina-view-settings .lumina-main {
+  background:
+    radial-gradient(
+      circle at 78% -8%,
+      rgba(79,70,229,0.085),
+      transparent 28rem
+    ),
+    linear-gradient(
+      180deg,
+      #f8fafc 0%,
+      #f4f6fa 46%,
+      #f1f5f9 100%
+    ) !important;
+}
+
+
+/* ---------- TYPOGRAPHY ---------- */
+
+.lumina-workspace h1 {
+  color: #111827 !important;
+  font-weight: 760 !important;
+  letter-spacing: -0.04em;
+}
+
+.lumina-workspace h2 {
+  color: #172033 !important;
+  font-weight: 700 !important;
+}
+
+.lumina-workspace h3 {
+  color: #1e293b !important;
+  font-weight: 680 !important;
+}
+
+.lumina-workspace p {
+  line-height: 1.55;
+}
+
+.lumina-workspace .text-\[\#71717a\],
+.lumina-workspace .text-\[\#a1a1aa\] {
+  color: #64748b !important;
+}
+
+
+/* ---------- SESSION BAR ---------- */
+
+.lumina-sessionbar {
+  color: #475569 !important;
+  background: rgba(255,255,255,0.94) !important;
+  border-color: rgba(30,41,59,0.12) !important;
+  box-shadow: var(--lumina-shadow-sm) !important;
+}
+
+.lumina-session-email {
+  color: #334155 !important;
+  font-weight: 520;
+}
+
+
+/* ---------- SURFACES ---------- */
+
+.lumina-target-query,
+.lumina-icp-panel,
+.lumina-target-table,
+.lumina-database-table,
+.lumina-import-upload,
+.lumina-import-job,
+.lumina-import-mapping,
+.lumina-import-lookup,
+.lumina-list-card,
+.lumina-list-detail,
+.lumina-client-profile,
+.lumina-home-metric,
+.lumina-home-action,
+.lumina-campaign-editor,
+.lumina-admin-session,
+.lumina-admin-scope,
+.lumina-admin-capabilities,
+.lumina-admin-safeguards {
+  background: #ffffff !important;
+  border-color: rgba(30,41,59,0.13) !important;
+  box-shadow: var(--lumina-shadow-md) !important;
+}
+
+
+/* ---------- FORMS ---------- */
+
+.lumina-workspace input,
+.lumina-workspace select,
+.lumina-workspace textarea {
+  color: #172033 !important;
+  background: #ffffff !important;
+  border-color: rgba(51,65,85,0.20) !important;
+}
+
+.lumina-workspace input::placeholder,
+.lumina-workspace textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+.lumina-workspace input:focus,
+.lumina-workspace select:focus,
+.lumina-workspace textarea:focus {
+  border-color: rgba(79,70,229,0.48) !important;
+  box-shadow: 0 0 0 3px rgba(79,70,229,0.10) !important;
+}
+
+
+/* ---------- BUTTONS ---------- */
+
+.lumina-target-interpret,
+.lumina-import-submit,
+.lumina-campaign-create-button,
+.lumina-campaign-import-button {
+  color: #ffffff !important;
+  font-weight: 650 !important;
+  background:
+    linear-gradient(
+      135deg,
+      #5146e5 0%,
+      #4338ca 58%,
+      #3730a3 100%
+    ) !important;
+  border-color: transparent !important;
+  box-shadow:
+    0 10px 22px rgba(67,56,202,0.22),
+    inset 0 1px 0 rgba(255,255,255,0.18) !important;
+}
+
+.lumina-workspace button {
+  font-weight: 600;
+}
+
+.lumina-workspace button:disabled {
+  opacity: 0.46 !important;
+  cursor: not-allowed;
+}
+
+
+/* ---------- TARGET BUILDER ---------- */
+
+.lumina-target-query {
+  border-color: rgba(67,56,202,0.18) !important;
+  box-shadow:
+    0 18px 44px rgba(15,23,42,0.075),
+    0 2px 8px rgba(15,23,42,0.035) !important;
+}
+
+.lumina-target-query-input {
+  color: #0f172a !important;
+  font-size: 1.12rem !important;
+  font-weight: 520;
+}
+
+.lumina-target-query-input::placeholder {
+  color: #8090a5 !important;
+}
+
+.lumina-target-helper {
+  color: #58677d !important;
+  font-size: 0.78rem;
+}
+
+.lumina-icp-panel p,
+.lumina-icp-panel label,
+.lumina-icp-panel span {
+  color: #526176;
+}
+
+.lumina-target-results-title {
+  color: #111827 !important;
+  font-size: 1.65rem !important;
+  font-weight: 740 !important;
+}
+
+.lumina-target-results-header p {
+  color: #58677d !important;
+}
+
+
+/* ---------- DATA TABLES ---------- */
+
+.lumina-target-grid,
+.lumina-data-grid,
+.lumina-list-members {
+  color: #334155 !important;
+}
+
+.lumina-target-grid-head,
+.lumina-data-grid-head {
+  background: #f1f5f9 !important;
+  border-bottom-color: rgba(30,41,59,0.14) !important;
+}
+
+.lumina-target-grid-head th,
+.lumina-data-grid-head th,
+.lumina-list-members th {
+  color: #475569 !important;
+  font-size: 0.72rem !important;
+  font-weight: 760 !important;
+  letter-spacing: 0.075em;
+}
+
+.lumina-target-grid td,
+.lumina-data-grid td,
+.lumina-list-members td {
+  color: #3f4c61 !important;
+}
+
+.lumina-target-grid td div[class*="font-bold"],
+.lumina-data-grid td div[class*="font-bold"] {
+  color: #111827 !important;
+  font-weight: 680 !important;
+}
+
+.lumina-target-grid td div[class*="text-xs"],
+.lumina-data-grid td div[class*="text-xs"] {
+  color: #64748b !important;
+}
+
+.lumina-target-grid tbody tr,
+.lumina-data-grid tbody tr {
+  background: rgba(255,255,255,0.98);
+}
+
+.lumina-target-grid tbody tr:hover,
+.lumina-data-grid tbody tr:hover {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(79,70,229,0.065),
+      #ffffff 34%
+    ) !important;
+  box-shadow: inset 3px 0 0 #5146e5;
+}
+
+.lumina-target-table-footer {
+  color: #58677d !important;
+  background: #f8fafc !important;
+  border-top-color: rgba(30,41,59,0.11) !important;
+}
+
+
+/* ---------- BADGES / INTELLIGENCE SIGNALS ---------- */
+
+.lumina-target-grid td span[class*="text-indigo"] {
+  color: #4338ca !important;
+  background: #eef2ff !important;
+  border-color: #c7d2fe !important;
+  font-weight: 650;
+}
+
+.lumina-session-status {
+  color: #047857 !important;
+  background: #ecfdf5 !important;
+  border-color: #a7f3d0 !important;
+}
+
+
+/* ---------- IMPORT ---------- */
+
+.lumina-import-title {
+  color: #111827 !important;
+  font-size: 2rem !important;
+  font-weight: 760 !important;
+}
+
+.lumina-import-subtitle,
+.lumina-import-upload > p,
+.lumina-import-job .font-mono {
+  color: #58677d !important;
+}
+
+.lumina-import-upload label,
+.lumina-import-lookup label {
+  color: #334155 !important;
+  font-weight: 620;
+}
+
+.lumina-import-upload h2,
+.lumina-import-job h2,
+.lumina-import-mapping h2,
+.lumina-import-lookup h2 {
+  color: #172033 !important;
+}
+
+
+/* ---------- SIDEBAR ---------- */
+
+.lumina-sidebar {
+  background:
+    linear-gradient(
+      180deg,
+      #0c1020 0%,
+      #101426 52%,
+      #0b0f1c 100%
+    ) !important;
+  border-right-color: rgba(148,163,184,0.11) !important;
+}
+
+.lumina-sidebar-nav button {
+  color: #aeb8cc !important;
+}
+
+.lumina-sidebar-nav button:hover {
+  color: #f8fafc !important;
+  background: rgba(255,255,255,0.055) !important;
+}
+
+.lumina-sidebar-nav button[class*="bg-indigo"] {
+  color: #ffffff !important;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(79,70,229,0.88),
+      rgba(99,102,241,0.72)
+    ) !important;
+}
+
+
+/* ---------- SAVED SEARCHES / LIST CARDS ---------- */
+
+.lumina-saved-searches h2,
+.lumina-lists-title,
+.lumina-home-title,
+.lumina-client-title,
+.lumina-campaigns-title,
+.lumina-admin-title {
+  color: #111827 !important;
+  font-weight: 750 !important;
+}
+
+.lumina-saved-searches > button,
+.lumina-saved-searches div + button {
+  color: #27324a !important;
+  background: #ffffff !important;
+  border-color: rgba(30,41,59,0.12) !important;
+}
+
+
+/* ---------- MOTION ---------- */
+
+.lumina-target-table,
+.lumina-database-table,
+.lumina-list-card,
+.lumina-home-metric,
+.lumina-home-action {
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    border-color 160ms ease;
+}
+
+.lumina-list-card:hover,
+.lumina-home-action:hover {
+  transform: translateY(-2px);
+  border-color: rgba(79,70,229,0.22) !important;
+  box-shadow: var(--lumina-shadow-lg) !important;
+}
+
+
+/* =========================================================
+   PREMIUM INTELLIGENCE WORKSPACE — V2.1
+   Target Builder interaction and typography refinement
+   ========================================================= */
+
+/* Strong, consistent product typography */
+.lumina-workspace,
+.lumina-workspace button,
+.lumina-workspace input,
+.lumina-workspace select,
+.lumina-workspace textarea,
+.lumina-workspace table {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+}
+
+
+/* Session context should be readable but unobtrusive */
+.lumina-sessionbar {
+  font-size: 0.78rem !important;
+}
+
+.lumina-session-email {
+  color: #475569 !important;
+  font-weight: 580 !important;
+}
+
+
+/* Understood-as intelligence panel */
+.lumina-target-understood {
+  background:
+    linear-gradient(
+      135deg,
+      #f7f7ff 0%,
+      #ffffff 72%
+    ) !important;
+  border-color: rgba(79,70,229,0.18) !important;
+}
+
+.lumina-target-understood h2 {
+  color: #30364a !important;
+  font-weight: 750 !important;
+  letter-spacing: 0.055em !important;
+}
+
+.lumina-target-understood p,
+.lumina-target-understood label {
+  color: #526176 !important;
+}
+
+
+/* Remove old dark-theme buttons from interpreted filters */
+.lumina-target-understood button {
+  color: #334155 !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(51,65,85,0.18) !important;
+  box-shadow: 0 2px 5px rgba(15,23,42,0.035) !important;
+}
+
+.lumina-target-understood button:hover:not(:disabled) {
+  color: #3730a3 !important;
+  background: #f8f9ff !important;
+  border-color: rgba(79,70,229,0.30) !important;
+}
+
+
+/* Apply/Search remains the decisive action */
+.lumina-target-understood button[class*="bg-indigo"] {
+  color: #ffffff !important;
+  background:
+    linear-gradient(
+      135deg,
+      #5146e5,
+      #4338ca
+    ) !important;
+  border-color: transparent !important;
+  box-shadow: 0 8px 18px rgba(67,56,202,0.20) !important;
+}
+
+
+/* Filter tokens */
+.lumina-target-understood span,
+.lumina-target-understood [class*="rounded"] {
+  border-color: rgba(79,70,229,0.18);
+}
+
+.lumina-target-understood [class*="bg-[#"] {
+  color: #4338ca !important;
+  background: #eef2ff !important;
+}
+
+
+/* ICP controls */
+.lumina-icp-panel select,
+.lumina-icp-panel input,
+.lumina-icp-panel textarea {
+  min-height: 42px;
+  color: #1e293b !important;
+  font-weight: 500;
+}
+
+.lumina-icp-panel button {
+  min-height: 40px;
+}
+
+.lumina-icp-panel button:disabled {
+  color: #94a3b8 !important;
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+  opacity: 1 !important;
+}
+
+
+/* Results action hierarchy */
+.lumina-target-results-header button {
+  min-height: 40px;
+  padding-left: 18px !important;
+  padding-right: 18px !important;
+}
+
+.lumina-target-results-header button:disabled {
+  color: #94a3b8 !important;
+  background: #e5e7eb !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: none !important;
+}
+
+.lumina-target-results-header button[class*="bg-indigo"]:not(:disabled) {
+  color: #ffffff !important;
+  background:
+    linear-gradient(
+      135deg,
+      #5146e5,
+      #4338ca
+    ) !important;
+}
+
+
+/* Premium database header */
+.lumina-target-grid-head th {
+  color: #526176 !important;
+  font-size: 0.70rem !important;
+  font-weight: 760 !important;
+  letter-spacing: 0.085em !important;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif !important;
+}
+
+
+/* Give the result table more intentional vertical rhythm */
+.lumina-target-grid td {
+  padding-top: 15px !important;
+  padding-bottom: 15px !important;
+}
+
+.lumina-target-table {
+  overflow: hidden;
+}
+
+
+/* Better empty state */
+.lumina-target-grid td[colspan] {
+  min-height: 180px;
+  padding: 54px 24px !important;
+  color: #64748b !important;
+  font-weight: 520;
+  text-align: center;
+  background:
+    radial-gradient(
+      circle at 50% 42%,
+      rgba(79,70,229,0.045),
+      transparent 25rem
+    ),
+    #ffffff !important;
+}
+
+
+/* =========================================================
+   PREMIUM INTELLIGENCE WORKSPACE — V2.2
+   Target Builder save workflow
+   ========================================================= */
+
+.lumina-target-save-secondary {
+  color: #334155 !important;
+  background: #ffffff !important;
+  border-color: rgba(51,65,85,0.18) !important;
+  box-shadow: 0 2px 6px rgba(15,23,42,0.04) !important;
+}
+
+.lumina-target-save-secondary:hover:not(:disabled) {
+  color: #3730a3 !important;
+  background: #f8f9ff !important;
+  border-color: rgba(79,70,229,0.30) !important;
+}
+
+.lumina-target-save-primary {
+  color: #ffffff !important;
+  background:
+    linear-gradient(
+      135deg,
+      #5146e5,
+      #4338ca
+    ) !important;
+  border-color: transparent !important;
+  box-shadow: 0 9px 20px rgba(67,56,202,0.20) !important;
+}
+
+.lumina-target-save-form {
+  color: #27324a !important;
+  background:
+    linear-gradient(
+      135deg,
+      #ffffff 0%,
+      #f8f9ff 100%
+    ) !important;
+  border-color: rgba(30,41,59,0.13) !important;
+  box-shadow:
+    0 14px 34px rgba(15,23,42,0.075) !important;
+}
+
+.lumina-target-save-form label {
+  color: #334155 !important;
+  font-weight: 650;
+}
+
+.lumina-target-save-input {
+  min-height: 46px;
+  color: #172033 !important;
+  background: #ffffff !important;
+  border-color: rgba(51,65,85,0.20) !important;
+}
+
+.lumina-target-save-input:focus {
+  border-color: rgba(79,70,229,0.48) !important;
+  box-shadow: 0 0 0 3px rgba(79,70,229,0.10) !important;
+}
+
+.lumina-target-save-cancel {
+  color: #475569 !important;
+  background: #ffffff !important;
+  border-color: rgba(51,65,85,0.16) !important;
+}
+
+.lumina-target-save-confirm {
+  color: #ffffff !important;
+  background:
+    linear-gradient(
+      135deg,
+      #5146e5,
+      #4338ca
+    ) !important;
+  border-color: transparent !important;
+  box-shadow: 0 8px 18px rgba(67,56,202,0.18) !important;
+}
+
+.lumina-target-save-confirm:disabled {
+  color: #94a3b8 !important;
+  background: #e5e7eb !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+}
