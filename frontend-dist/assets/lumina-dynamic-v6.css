@@ -2526,3 +2526,197 @@ div[class*="bg-[#111114]"][class*="rounded-2xl"] label:hover {
     overflow-x: auto;
   }
 }
+
+/* =========================================================
+   PASS 6.1 — CAMPAIGN EDIT / HISTORY SIDE PANELS
+   ========================================================= */
+
+.lumina-campaign-editor,
+.lumina-campaign-history {
+  position: fixed;
+  top: 78px;
+  right: 22px;
+  bottom: 22px;
+  z-index: 80;
+
+  width: min(560px, calc(100vw - 290px));
+  max-height: calc(100vh - 100px);
+
+  overflow-y: auto;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,0.985),
+      rgba(247,248,255,0.97)
+    ) !important;
+
+  border: 1px solid rgba(99,102,241,0.16) !important;
+  border-radius: 20px !important;
+
+  box-shadow:
+    0 24px 70px rgba(35,42,75,0.18),
+    0 4px 18px rgba(35,42,75,0.08);
+
+  backdrop-filter: blur(18px);
+
+  animation: luminaCampaignPanelIn 170ms ease-out;
+}
+
+.lumina-campaign-editor {
+  padding: 24px !important;
+}
+
+.lumina-campaign-history {
+  padding: 22px !important;
+}
+
+/* Editor header feel */
+
+.lumina-campaign-editor h2 {
+  position: sticky;
+  top: -24px;
+  z-index: 2;
+
+  margin: -24px -24px 20px;
+  padding: 20px 24px 16px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.99),
+      rgba(250,250,255,0.97)
+    );
+
+  border-bottom: 1px solid rgba(73,87,119,0.09);
+}
+
+/* History header */
+
+.lumina-campaign-history-header {
+  position: sticky;
+  top: -22px;
+  z-index: 3;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  margin: -22px -22px 18px;
+  padding: 18px 20px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.99),
+      rgba(249,250,255,0.97)
+    );
+
+  border-bottom: 1px solid rgba(73,87,119,0.09);
+}
+
+.lumina-campaign-history-title {
+  margin: 0 !important;
+  color: #1d2639 !important;
+}
+
+.lumina-campaign-panel-close {
+  flex-shrink: 0;
+
+  padding: 8px 11px;
+
+  color: #606a80;
+  background: rgba(245,246,250,0.95);
+
+  border: 1px solid rgba(73,87,119,0.12);
+  border-radius: 9px;
+
+  font-size: 0.74rem;
+  font-weight: 650;
+}
+
+.lumina-campaign-panel-close:hover {
+  color: #514bcf;
+  background: rgba(99,102,241,0.075);
+  border-color: rgba(99,102,241,0.18);
+}
+
+/* Preserve usable controls inside fixed editor */
+
+.lumina-campaign-editor select,
+.lumina-campaign-editor textarea,
+.lumina-campaign-editor input {
+  min-height: 42px;
+}
+
+.lumina-campaign-editor textarea {
+  min-height: 120px;
+}
+
+/* Make editor actions more obvious */
+
+.lumina-campaign-editor button {
+  min-height: 38px;
+}
+
+.lumina-campaign-editor button[type="submit"] {
+  color: #ffffff !important;
+  background:
+    linear-gradient(
+      135deg,
+      #625de0,
+      #514bcf
+    ) !important;
+
+  border-color: transparent !important;
+}
+
+.lumina-campaign-editor button[type="button"] {
+  background: rgba(245,246,250,0.96) !important;
+  color: #606a80 !important;
+}
+
+/* History cards inside drawer */
+
+.lumina-campaign-history-card,
+.lumina-campaign-event {
+  background: rgba(248,249,253,0.92) !important;
+}
+
+.lumina-campaign-history-card + .lumina-campaign-history-card {
+  margin-top: 8px;
+}
+
+.lumina-campaign-event {
+  margin-top: 8px;
+}
+
+/* Interaction */
+
+@keyframes luminaCampaignPanelIn {
+  from {
+    opacity: 0;
+    transform: translateX(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Narrow screens */
+
+@media (max-width: 900px) {
+  .lumina-campaign-editor,
+  .lumina-campaign-history {
+    top: 68px;
+    right: 10px;
+    left: 10px;
+    bottom: 10px;
+
+    width: auto;
+    max-height: calc(100vh - 78px);
+  }
+}
