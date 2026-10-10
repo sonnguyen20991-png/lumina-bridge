@@ -5,6 +5,7 @@ import { Imports } from './views/Imports';
 import { Lists } from './views/Lists';
 import { Settings } from './views/Settings';
 import { IntelligenceHome } from './views/IntelligenceHome';
+import { Database } from './views/Database';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { View } from './types';
 import { SessionGate } from './components/Session';
@@ -45,6 +46,7 @@ export default function App() {
       case 'builder': return <TargetBuilder onOpenLists={() => navigate('lists')} />;
       case 'home': return <IntelligenceHome onNavigate={navigate} />;
       case 'lists': return <Lists />;
+      case 'contacts': return <Database />;
       case 'import': return <Imports onOpenSearch={() => navigate('builder')} />;
       case 'settings': return <Settings />;
       default: return <div className="py-24 max-w-xl space-y-4"><h1 className="text-2xl font-bold text-white">This section is not available in the Gate 1 release</h1><p className="text-sm text-[#71717a]">Search, Saved Searches, Lead Lists, and Imports are connected to the backend. This section still needs its own integration and verification.</p><button className="px-6 py-3 bg-indigo-600 rounded-xl text-white" onClick={()=>navigate('builder')}>Open Target Builder</button></div>;

@@ -1,4 +1,4 @@
-import type { CampaignSummary, ClientOption, Gate1Response, Gate1Session, InterpretData, List, Person, Query, SavedTarget } from '../types';
+import type { CampaignSummary, ClientOption, ContactIntelligence, Gate1Response, Gate1Session, InterpretData, List, Person, Query, SavedTarget } from '../types';
 import { normalizeQuery, requireUuid } from './query';
 
 let clientContext = '';
@@ -42,6 +42,7 @@ export const gate1Api = {
   getSession: () => request<Gate1Session>('/session'),
   interpret: (input: string) => request<InterpretData>('/search/interpret',{method:'POST',body:JSON.stringify({input})}),
   searchPeople: (query: Query, limit=50, offset=0) => request<Person[]>('/search/people',{method:'POST',body:JSON.stringify({interpreted_query:normalizeQuery(query),limit,offset})}),
+  getPersonIntelligence: (id: string) => request<ContactIntelligence>(`/people/${requireUuid(id)}/intelligence`),
   getSavedTargets: () => request<SavedTarget[]>('/saved-targets'),
   saveTarget: (data: {name:string;original_input:string;interpreted_query:Query}) => request<SavedTarget>('/saved-targets',{method:'POST',body:JSON.stringify({...data,interpreted_query:normalizeQuery(data.interpreted_query)})}),
   getLists: () => request<List[]>('/lists'),
