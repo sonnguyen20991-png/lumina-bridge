@@ -8,6 +8,8 @@ import type {
   Gate1Response,
   Gate1Session,
   InterpretData,
+  Icp,
+  IcpAssignmentResult,
   List,
   Person,
   Query,
@@ -41,7 +43,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<Gate
       headers: { 'Accept': 'application/json', ...(options.body ? {'Content-Type':'application/json'} : {}), ...(clientContext ? {'X-Lumina-Client-Id':clientContext} : {}), ...options.headers },
     });
   } catch {
-    throw new ApiError(writes ? 'The response was lost. The change may have been saved. Inspect Lead Lists or Saved Targets before trying again.' : 'Could not reach the authenticated backend. Reload Lumina to sign in, or retry the connection.', 0, 'CONNECTION_FAILED', [], writes);
+    throw new ApiError(writes ? 'The response was lost. The change may have been saved. Refresh the relevant list, saved searches, or ICPs before trying again.' : 'Could not reach the authenticated backend. Reload Lumina to sign in, or retry the connection.', 0, 'CONNECTION_FAILED', [], writes);
   }
   const result = await response.json().catch(() => null);
   if (!response.ok || result?.status !== 'ok' || !Object.hasOwn(result ?? {}, 'data')) {
@@ -53,6 +55,38 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<Gate
   return result;
 }
 export const gate1Api = {
+  getIcps: () => request<Icp[]>('/icps'),
+
+  createIcp: (data: {
+    id: string;
+    name: string;
+    description: string;
+  }) =>
+    request<Icp>('/icps', {
+      method: 'POST',
+      body: JSON.stringify({
+        id: requireUuid(data.id),
+        name: data.name,
+        description: data.description,
+      }),
+    }),
+
+  assignIcp: (
+    icpId: string,
+    personIds: string[],
+    action: 'add' | 'remove',
+  ) =>
+    request<IcpAssignmentResult>(
+      `/icps/${requireUuid(icpId)}/assignments`,
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          person_ids: personIds.map(requireUuid),
+          action,
+        }),
+      },
+    ),
+
   getSession: () => request<Gate1Session>('/session'),
   interpret: (input: string) => request<InterpretData>('/search/interpret',{method:'POST',body:JSON.stringify({input})}),
   searchPeople: (query: Query, limit=50, offset=0) => request<Person[]>('/search/people',{method:'POST',body:JSON.stringify({interpreted_query:normalizeQuery(query),limit,offset})}),

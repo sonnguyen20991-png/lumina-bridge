@@ -84,6 +84,18 @@ export interface ContactIntelligence {
 export interface List { id: string; name: string; member_count: number; created_at: string; created_by?: string; metadata?: { original_input?: string; interpreted_query?: Query; principal_id?: string } }
 export interface SavedTarget { id: string; name: string; original_input: string | null; interpreted_query: Query; created_at: string; created_by?: string }
 
+export interface Icp {
+  id: string;
+  name: string;
+  description?: string | null;
+  member_count?: number;
+}
+
+export interface IcpAssignmentResult {
+  tagged_person_ids: string[];
+  changed_count: number;
+}
+
 export interface CampaignSummary {
   id: string;
   name: string;

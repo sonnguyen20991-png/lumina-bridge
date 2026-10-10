@@ -1,4 +1,4 @@
-export const FILTER_LABELS = {title:'Title',department:'Department',seniority:'Seniority',location:'Location',city:'City',country:'Country',company:'Company',industry:'Industry',domain:'Domain',email:'Email'};
+export const FILTER_LABELS = {title:'Title',department:'Department',seniority:'Seniority',location:'Location',city:'City',country:'Country',company:'Company',industry:'Industry',domain:'Domain',email:'Email',icp:'ICP'};
 export const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export function requireUuid(id: string) { if (!UUID.test(id)) throw new Error('The backend returned an invalid record ID.'); return id; }
 export function normalizeQuery(value: unknown): {q:string;filters:Record<string,string>} {
@@ -10,6 +10,7 @@ export function normalizeQuery(value: unknown): {q:string;filters:Record<string,
   for (const [key,value] of Object.entries(query.filters ?? {})) {
     if (!Object.hasOwn(FILTER_LABELS,key)) throw new Error(`The backend does not support the ${key} filter.`);
     if (typeof value !== 'string' || value.length > 500) throw new Error('Each filter must contain one text value, at most 500 characters.');
+    if (key === 'icp' && value.trim() && !UUID.test(value.trim())) throw new Error('Choose an ICP from the list.');
     if (value.trim()) filters[key] = value.trim();
   }
   return {q:typeof query.q === 'string' ? query.q.trim() : '',filters};
