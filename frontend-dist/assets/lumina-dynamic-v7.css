@@ -3312,3 +3312,71 @@ div[class*="bg-[#111114]"][class*="rounded-2xl"] label:hover {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* =========================================================
+   PASS 7.1 — IMPORT LIGHT-SURFACE BUTTON FIX
+   ========================================================= */
+
+.lumina-import-lookup button,
+.lumina-import-job button,
+.lumina-import-mapping button,
+.lumina-import-review button,
+.lumina-conflicts button {
+  color: #5751d4 !important;
+  background: rgba(255,255,255,0.90) !important;
+  border: 1px solid rgba(99,102,241,0.15) !important;
+  border-radius: 10px !important;
+}
+
+.lumina-import-lookup button:not(:disabled):hover,
+.lumina-import-job button:not(:disabled):hover,
+.lumina-import-mapping button:not(:disabled):hover,
+.lumina-import-review button:not(:disabled):hover,
+.lumina-conflicts button:not(:disabled):hover {
+  color: #4943c3 !important;
+  background: rgba(99,102,241,0.075) !important;
+  border-color: rgba(99,102,241,0.23) !important;
+}
+
+.lumina-import-lookup button:disabled,
+.lumina-import-job button:disabled,
+.lumina-import-review button:disabled,
+.lumina-conflicts button:disabled {
+  color: #a2a7bd !important;
+  background: rgba(246,247,251,0.92) !important;
+  border-color: rgba(96,108,136,0.12) !important;
+  opacity: 1 !important;
+}
+
+/* Keep primary import actions visually primary */
+
+.lumina-import-submit,
+.lumina-import-job .bg-indigo-600,
+.lumina-import-review .bg-indigo-600,
+.lumina-conflicts .bg-indigo-600 {
+  color: #ffffff !important;
+  background:
+    linear-gradient(
+      135deg,
+      #625de0,
+      #514bcf
+    ) !important;
+  border-color: transparent !important;
+}
+
+/* Native file control cleanup */
+
+.lumina-import-file::file-selector-button {
+  margin-right: 12px;
+  padding: 7px 11px;
+  color: #514bcf;
+  background: rgba(99,102,241,0.07);
+  border: 1px solid rgba(99,102,241,0.14);
+  border-radius: 8px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.lumina-import-file::file-selector-button:hover {
+  background: rgba(99,102,241,0.11);
+}
