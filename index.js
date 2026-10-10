@@ -2,6 +2,7 @@ import { registerImportReviewRoutes } from './import-review-routes.js';
 import { registerCampaignRoutes } from './campaign-routes.js';
 import { registerIcpRoutes } from './icp-routes.js';
 import { registerConflictRoutes } from './conflict-routes.js';
+import { registerLivingDatabaseRoutes } from './living-database-routes.js';
 import { registerFrontend } from './frontend-routes.mjs';
 import { registerGate1Routes } from './gate1-routes.js';
 import express from 'express';
@@ -297,6 +298,7 @@ registerGate1Routes(app, pool);
 registerConflictRoutes(app, pool);
 registerCampaignRoutes(app, pool);
 registerProductRoutes(app, pool);
+registerLivingDatabaseRoutes(app, pool);
 registerImportReviewRoutes(app, pool);
 registerImportRoutes(app, pool);
 
