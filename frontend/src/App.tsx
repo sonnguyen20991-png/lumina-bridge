@@ -4,6 +4,7 @@ import { TargetBuilder } from './views/TargetBuilder';
 import { Imports } from './views/Imports';
 import { Lists } from './views/Lists';
 import { Settings } from './views/Settings';
+import { IntelligenceHome } from './views/IntelligenceHome';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { View } from './types';
 import { SessionGate } from './components/Session';
@@ -42,6 +43,7 @@ export default function App() {
   const renderView = () => {
     switch (currentView) {
       case 'builder': return <TargetBuilder onOpenLists={() => navigate('lists')} />;
+      case 'home': return <IntelligenceHome onNavigate={navigate} />;
       case 'lists': return <Lists />;
       case 'import': return <Imports onOpenSearch={() => navigate('builder')} />;
       case 'settings': return <Settings />;
