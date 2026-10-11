@@ -99,7 +99,7 @@ export function registerCampaignRoutes(app, pool) {
        JOIN campaigns campaign
          ON campaign.id=cp.campaign_id
        LEFT JOIN LATERAL (
-         SELECT c.name
+         SELECT c.canonical_name AS name
          FROM employments e
          JOIN companies c
            ON c.id=e.company_id
