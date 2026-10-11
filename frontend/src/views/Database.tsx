@@ -18,6 +18,18 @@ const secondaryButton =
 const primaryButton =
   'px-6 py-2.5 bg-indigo-600 text-white text-xs font-bold rounded-xl hover:bg-indigo-500 disabled:opacity-30';
 
+const qualitySignalLabels: Record<string, string> = {
+  freshness_aging: 'Data may be aging',
+  freshness_changed: 'Contact data changed',
+  freshness_review_required: 'Verification review required',
+  freshness_incomplete: 'Verification incomplete',
+  freshness_restricted: 'Verification restricted',
+  freshness_unverified: 'Not yet verified',
+  verification_missing: 'No verification history',
+  verification_pending: 'Verification in progress',
+  incomplete_record: 'Profile information missing'
+};
+
 const columnDefs: DatabaseColumn[] = [
   {
     key: 'name',
@@ -844,6 +856,95 @@ export function Database() {
                                 </span>
                               ),
                             )}
+                          </div>
+                        </div>
+                      )}
+
+                      {!!intelligence.data_quality.signals
+                        ?.filter(
+                          (signal) =>
+                            signal !== 'duplicate_review_required'
+                        )
+                        .some(
+                          (signal) =>
+                            Boolean(qualitySignalLabels[signal])
+                        ) && (
+                        <div className="mt-4">
+                          <p
+                            className="text-[10px] uppercase tracking-wider"
+                            style={{ color: '#8ea0b8' }}
+                          >
+                            Quality Signals
+                          </p>
+
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {intelligence.data_quality.signals
+                              .filter(
+                                (signal) =>
+                                  signal !==
+                                  'duplicate_review_required'
+                              )
+                              .filter(
+                                (signal) =>
+                                  Boolean(
+                                    qualitySignalLabels[signal]
+                                  )
+                              )
+                              .map((signal) => (
+                                <span
+                                  key={signal}
+                                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px]"
+                                  style={{
+                                    color:
+                                      signal ===
+                                      'verification_pending'
+                                        ? '#c4b5fd'
+                                        : signal ===
+                                            'freshness_changed' ||
+                                          signal ===
+                                            'freshness_review_required'
+                                          ? '#fde68a'
+                                          : '#cbd5e1',
+                                    border:
+                                      signal ===
+                                      'verification_pending'
+                                        ? '1px solid rgba(167,139,250,0.20)'
+                                        : signal ===
+                                            'freshness_changed' ||
+                                          signal ===
+                                            'freshness_review_required'
+                                          ? '1px solid rgba(251,191,36,0.20)'
+                                          : '1px solid rgba(148,163,184,0.14)',
+                                    background:
+                                      signal ===
+                                      'verification_pending'
+                                        ? 'rgba(139,92,246,0.07)'
+                                        : signal ===
+                                            'freshness_changed' ||
+                                          signal ===
+                                            'freshness_review_required'
+                                          ? 'rgba(245,158,11,0.06)'
+                                          : 'rgba(148,163,184,0.05)',
+                                  }}
+                                >
+                                  <span
+                                    className="material-symbols-outlined"
+                                    style={{ fontSize: '14px' }}
+                                  >
+                                    {signal ===
+                                    'verification_pending'
+                                      ? 'sync'
+                                      : signal ===
+                                            'freshness_changed' ||
+                                          signal ===
+                                            'freshness_review_required'
+                                        ? 'priority_high'
+                                        : 'info'}
+                                  </span>
+
+                                  {qualitySignalLabels[signal]}
+                                </span>
+                              ))}
                           </div>
                         </div>
                       )}

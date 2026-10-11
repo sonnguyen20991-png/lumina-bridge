@@ -215,3 +215,97 @@ test('duplicate aggregation is bounded and ignores invalid scores safely', () =>
   assert.equal(result.duplicates.highest_match_score, 88);
   assert.equal(result.duplicates.needs_review, true);
 });
+
+test('freshness states produce explicit actionable signals', () => {
+  const cases = [
+    ['aging', 'freshness_aging'],
+    ['changed', 'freshness_changed'],
+    ['needs_review', 'freshness_review_required'],
+    ['incomplete', 'freshness_incomplete'],
+    ['restricted', 'freshness_restricted'],
+    ['unverified', 'freshness_unverified']
+  ];
+
+  for (const [freshnessResult, expectedSignal] of cases) {
+    const result = buildPersonDataQuality({
+      person: {
+        full_name: 'Freshness Contact'
+      },
+      contact: {},
+      company: null,
+      freshness: {
+        latest: {
+          freshness_result: freshnessResult,
+          confidence: 80,
+          completed_at: '2026-10-11T06:00:00.000Z'
+        },
+        open: null
+      },
+      enrichment: [],
+      duplicateCandidates: []
+    });
+
+    assert.ok(
+      result.signals.includes(expectedSignal),
+      `${freshnessResult} should emit ${expectedSignal}`
+    );
+  }
+});
+
+test('healthy freshness does not emit a freshness warning signal', () => {
+  const result = buildPersonDataQuality({
+    person: {
+      full_name: 'Healthy Contact'
+    },
+    contact: {},
+    company: null,
+    freshness: {
+      latest: {
+        freshness_result: 'healthy',
+        confidence: 95,
+        completed_at: '2026-10-11T06:00:00.000Z'
+      },
+      open: null
+    },
+    enrichment: [],
+    duplicateCandidates: []
+  });
+
+  assert.equal(
+    result.signals.some(
+      (signal) =>
+        signal.startsWith('freshness_')
+    ),
+    false
+  );
+});
+
+test('freshness warning and pending verification can coexist', () => {
+  const result = buildPersonDataQuality({
+    person: {
+      full_name: 'Changing Contact'
+    },
+    contact: {},
+    company: null,
+    freshness: {
+      latest: {
+        freshness_result: 'changed',
+        confidence: 76,
+        completed_at: '2026-10-01T00:00:00.000Z'
+      },
+      open: {
+        status: 'running'
+      }
+    },
+    enrichment: [],
+    duplicateCandidates: []
+  });
+
+  assert.ok(
+    result.signals.includes('freshness_changed')
+  );
+
+  assert.ok(
+    result.signals.includes('verification_pending')
+  );
+});

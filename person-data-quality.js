@@ -83,6 +83,28 @@ export function buildPersonDataQuality({
 
   const signals = [];
 
+  const freshnessSignalByStatus = {
+    aging: 'freshness_aging',
+    changed: 'freshness_changed',
+    needs_review: 'freshness_review_required',
+    incomplete: 'freshness_incomplete',
+    restricted: 'freshness_restricted',
+    unverified: 'freshness_unverified'
+  };
+
+  if (
+    latest?.freshness_result &&
+    freshnessSignalByStatus[
+      latest.freshness_result
+    ]
+  ) {
+    signals.push(
+      freshnessSignalByStatus[
+        latest.freshness_result
+      ]
+    );
+  }
+
   if (!latest) {
     signals.push('verification_missing');
   }
