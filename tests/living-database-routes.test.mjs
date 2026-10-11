@@ -267,6 +267,27 @@ function intelligenceFixture({
         );
       }
 
+      if (
+        normalized.includes(
+          'FROM duplicate_candidates dc'
+        )
+      ) {
+        return result([
+          {
+            id:
+              '88888888-8888-4888-8888-888888888888',
+            person_id_1:
+              personId,
+            person_id_2:
+              '99999999-9999-4999-8999-999999999999',
+            match_score:
+              87,
+            status:
+              'pending'
+          }
+        ]);
+      }
+
       throw new Error(
         `Unexpected query: ${normalized}`
       );
@@ -403,6 +424,53 @@ test(
       1
     );
 
+    assert.ok(
+      data.data_quality
+    );
+
+    assert.equal(
+      data.data_quality.completeness.total_count,
+      11
+    );
+
+    assert.equal(
+      data.data_quality.freshness.status,
+      'healthy'
+    );
+
+    assert.equal(
+      data.data_quality.freshness.confidence,
+      94
+    );
+
+    assert.equal(
+      data.data_quality.evidence.enrichment_count,
+      1
+    );
+
+    assert.equal(
+      data.data_quality.duplicates.pending_count,
+      1
+    );
+
+    assert.equal(
+      data.data_quality.duplicates.highest_match_score,
+      87
+    );
+
+    assert.equal(
+      data.data_quality.duplicates.needs_review,
+      true
+    );
+
+    assert.equal(
+      Object.hasOwn(
+        data.data_quality,
+        'score'
+      ),
+      false
+    );
+
     assert.equal(
       data.campaigns.length,
       1
@@ -450,6 +518,25 @@ test(
           'FROM campaign_participations cp'
         )
       );
+
+    const duplicateQuery =
+      fixture.calls.find(call =>
+        call.sql.includes(
+          'FROM duplicate_candidates dc'
+        )
+      );
+
+    assert.ok(
+      duplicateQuery
+    );
+
+    assert.deepEqual(
+      duplicateQuery.params,
+      [
+        clientId,
+        personId
+      ]
+    );
 
     assert.deepEqual(
       campaignQuery.params,

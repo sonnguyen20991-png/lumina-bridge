@@ -18,6 +18,18 @@ const secondaryButton =
 const primaryButton =
   'px-6 py-2.5 bg-indigo-600 text-white text-xs font-bold rounded-xl hover:bg-indigo-500 disabled:opacity-30';
 
+const qualitySignalLabels: Record<string, string> = {
+  freshness_aging: 'Data may be aging',
+  freshness_changed: 'Contact data changed',
+  freshness_review_required: 'Verification review required',
+  freshness_incomplete: 'Verification incomplete',
+  freshness_restricted: 'Verification restricted',
+  freshness_unverified: 'Not yet verified',
+  verification_missing: 'No verification history',
+  verification_pending: 'Verification in progress',
+  incomplete_record: 'Profile information missing'
+};
+
 const columnDefs: DatabaseColumn[] = [
   {
     key: 'name',
@@ -558,7 +570,7 @@ export function Database() {
             role="dialog"
             aria-modal="true"
             aria-label="Contact intelligence"
-            className="w-full h-full overflow-y-auto shadow-2xl"
+            className="lumina-contact-intelligence w-full h-full overflow-y-auto shadow-2xl"
             style={{
               width: 'min(720px,100vw)',
               maxWidth: '720px',
@@ -586,11 +598,20 @@ export function Database() {
                   Contact Intelligence
                 </p>
 
-                <h2 className="text-2xl font-semibold text-white mt-2 truncate tracking-tight">
+                <h2
+                  className="text-2xl font-semibold mt-2 truncate tracking-tight"
+                  style={{
+                    color: '#ffffff',
+                    textShadow: '0 1px 18px rgba(255,255,255,0.06)',
+                  }}
+                >
                   {selectedPerson.full_name || 'Name unavailable'}
                 </h2>
 
-                <p className="text-sm text-[#b6b8c5] mt-1">
+                <p
+                  className="text-sm mt-1"
+                  style={{ color: '#cbd5e1' }}
+                >
                   {[
                     selectedPerson.current_title,
                     selectedPerson.company_name,
@@ -649,6 +670,322 @@ export function Database() {
 
               {intelligence && !intelligenceBusy && (
                 <>
+                  {intelligence.data_quality && (
+                    <section
+                      className="rounded-2xl"
+                      style={{
+                        padding: '18px',
+                        border:
+                          intelligence.data_quality.duplicates?.needs_review
+                            ? '1px solid rgba(251,191,36,0.26)'
+                            : '1px solid rgba(56,189,248,0.20)',
+                        background:
+                          intelligence.data_quality.duplicates?.needs_review
+                            ? 'linear-gradient(135deg,rgba(245,158,11,0.10),rgba(30,41,59,0.44))'
+                            : 'linear-gradient(135deg,rgba(14,165,233,0.10),rgba(30,41,59,0.44))',
+                        boxShadow:
+                          intelligence.data_quality.duplicates?.needs_review
+                            ? 'inset 0 1px 0 rgba(255,255,255,0.05), 0 18px 50px rgba(245,158,11,0.045)'
+                            : 'inset 0 1px 0 rgba(255,255,255,0.05), 0 18px 50px rgba(14,165,233,0.045)',
+                      }}
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <p
+                            className="text-[10px] uppercase tracking-[0.18em]"
+                            style={{ color: '#93a4bd' }}
+                          >
+                            Data Quality
+                          </p>
+
+                          <h3
+                            className="text-lg font-semibold mt-1"
+                            style={{
+                              color: '#ffffff',
+                              letterSpacing: '-0.01em',
+                            }}
+                          >
+                            {intelligence.data_quality.duplicates?.needs_review
+                              ? 'Review recommended'
+                              : intelligence.data_quality.completeness?.missing?.length
+                                ? 'Profile needs completion'
+                                : 'Profile looks complete'}
+                          </h3>
+                        </div>
+
+                        <span
+                          className="px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap"
+                          style={{
+                            color:
+                              intelligence.data_quality.duplicates?.needs_review
+                                ? '#fde68a'
+                                : '#bae6fd',
+                            border:
+                              intelligence.data_quality.duplicates?.needs_review
+                                ? '1px solid rgba(251,191,36,0.28)'
+                                : '1px solid rgba(56,189,248,0.26)',
+                            background:
+                              intelligence.data_quality.duplicates?.needs_review
+                                ? 'rgba(245,158,11,0.09)'
+                                : 'rgba(14,165,233,0.08)',
+                          }}
+                        >
+                          {intelligence.data_quality.completeness?.present_count ?? 0}
+                          /
+                          {intelligence.data_quality.completeness?.total_count ?? 0}
+                          {' '}fields
+                        </span>
+                      </div>
+
+                      <div
+                        className="mt-4"
+                        style={{
+                          height: '6px',
+                          borderRadius: '999px',
+                          overflow: 'hidden',
+                          background: 'rgba(255,255,255,0.07)',
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: `${
+                              intelligence.data_quality.completeness?.total_count
+                                ? Math.min(
+                                    100,
+                                    Math.max(
+                                      0,
+                                      ((intelligence.data_quality.completeness.present_count ?? 0) /
+                                        intelligence.data_quality.completeness.total_count) *
+                                        100,
+                                    ),
+                                  )
+                                : 0
+                            }%`,
+                            height: '100%',
+                            borderRadius: '999px',
+                            background:
+                              'linear-gradient(90deg,rgba(56,189,248,0.95),rgba(129,140,248,0.95))',
+                          }}
+                        />
+                      </div>
+
+                      <div
+                        className="mt-4 text-sm"
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(2,minmax(0,1fr))',
+                          gap: '10px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            padding: '12px 13px',
+                            borderRadius: '12px',
+                            border: '1px solid rgba(255,255,255,0.07)',
+                            background: 'rgba(255,255,255,0.025)',
+                          }}
+                        >
+                          <p
+                            className="text-[10px] uppercase tracking-wider"
+                            style={{ color: '#8ea0b8' }}
+                          >
+                            Verified Intelligence
+                          </p>
+                          <p
+                            className="text-lg font-semibold mt-1"
+                            style={{ color: '#ffffff' }}
+                          >
+                            {intelligence.data_quality.evidence?.verified_enrichment_count ?? 0}
+                            {' / '}
+                            {intelligence.data_quality.evidence?.enrichment_count ?? 0}
+                          </p>
+                        </div>
+
+                        <div
+                          style={{
+                            padding: '12px 13px',
+                            borderRadius: '12px',
+                            border: '1px solid rgba(255,255,255,0.07)',
+                            background: 'rgba(255,255,255,0.025)',
+                          }}
+                        >
+                          <p
+                            className="text-[10px] uppercase tracking-wider"
+                            style={{ color: '#8ea0b8' }}
+                          >
+                            Duplicate Review
+                          </p>
+                          <p
+                            className={
+                              intelligence.data_quality.duplicates?.needs_review
+                                ? 'text-amber-200 font-medium mt-1'
+                                : 'text-[#e4e4e7] font-medium mt-1'
+                            }
+                          >
+                            {intelligence.data_quality.duplicates?.needs_review
+                              ? `${intelligence.data_quality.duplicates.pending_count ?? 0} pending`
+                              : 'Clear'}
+                          </p>
+                        </div>
+                      </div>
+
+                      {!!intelligence.data_quality.completeness?.missing?.length && (
+                        <div className="mt-4">
+                          <p
+                            className="text-[10px] uppercase tracking-wider"
+                            style={{ color: '#8ea0b8' }}
+                          >
+                            Missing Information
+                          </p>
+
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {intelligence.data_quality.completeness.missing.map(
+                              (field) => (
+                                <span
+                                  key={field}
+                                  className="px-2.5 py-1 rounded-lg text-[11px] capitalize"
+                                  style={{
+                                    color: '#cbd5e1',
+                                    border:
+                                      '1px solid rgba(148,163,184,0.18)',
+                                    background:
+                                      'rgba(148,163,184,0.07)',
+                                  }}
+                                >
+                                  {field.replaceAll('_', ' ')}
+                                </span>
+                              ),
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {!!intelligence.data_quality.signals
+                        ?.filter(
+                          (signal) =>
+                            signal !== 'duplicate_review_required'
+                        )
+                        .some(
+                          (signal) =>
+                            Boolean(qualitySignalLabels[signal])
+                        ) && (
+                        <div className="mt-4">
+                          <p
+                            className="text-[10px] uppercase tracking-wider"
+                            style={{ color: '#8ea0b8' }}
+                          >
+                            Quality Signals
+                          </p>
+
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {intelligence.data_quality.signals
+                              .filter(
+                                (signal) =>
+                                  signal !==
+                                  'duplicate_review_required'
+                              )
+                              .filter(
+                                (signal) =>
+                                  Boolean(
+                                    qualitySignalLabels[signal]
+                                  )
+                              )
+                              .map((signal) => (
+                                <span
+                                  key={signal}
+                                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px]"
+                                  style={{
+                                    color:
+                                      signal ===
+                                      'verification_pending'
+                                        ? '#c4b5fd'
+                                        : signal ===
+                                            'freshness_changed' ||
+                                          signal ===
+                                            'freshness_review_required'
+                                          ? '#fde68a'
+                                          : '#cbd5e1',
+                                    border:
+                                      signal ===
+                                      'verification_pending'
+                                        ? '1px solid rgba(167,139,250,0.20)'
+                                        : signal ===
+                                            'freshness_changed' ||
+                                          signal ===
+                                            'freshness_review_required'
+                                          ? '1px solid rgba(251,191,36,0.20)'
+                                          : '1px solid rgba(148,163,184,0.14)',
+                                    background:
+                                      signal ===
+                                      'verification_pending'
+                                        ? 'rgba(139,92,246,0.07)'
+                                        : signal ===
+                                            'freshness_changed' ||
+                                          signal ===
+                                            'freshness_review_required'
+                                          ? 'rgba(245,158,11,0.06)'
+                                          : 'rgba(148,163,184,0.05)',
+                                  }}
+                                >
+                                  <span
+                                    className="material-symbols-outlined"
+                                    style={{ fontSize: '14px' }}
+                                  >
+                                    {signal ===
+                                    'verification_pending'
+                                      ? 'sync'
+                                      : signal ===
+                                            'freshness_changed' ||
+                                          signal ===
+                                            'freshness_review_required'
+                                        ? 'priority_high'
+                                        : 'info'}
+                                  </span>
+
+                                  {qualitySignalLabels[signal]}
+                                </span>
+                              ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {!!intelligence.data_quality.duplicates?.needs_review && (
+                        <div
+                          className="mt-4 flex items-start gap-3"
+                          style={{
+                            padding: '12px 13px',
+                            borderRadius: '12px',
+                            border:
+                              '1px solid rgba(251,191,36,0.16)',
+                            background:
+                              'rgba(245,158,11,0.055)',
+                          }}
+                        >
+                          <span className="material-symbols-outlined text-amber-300 text-lg">
+                            difference
+                          </span>
+
+                          <div>
+                            <p className="text-sm text-amber-100 font-medium">
+                              Possible duplicate contact
+                            </p>
+
+                            <p className="text-xs text-[#a1a1aa] mt-1">
+                              Highest match{' '}
+                              {Number.isFinite(
+                                intelligence.data_quality.duplicates
+                                  ?.highest_match_score,
+                              )
+                                ? `${intelligence.data_quality.duplicates?.highest_match_score}%`
+                                : 'available for review'}
+                              . Lumina will not merge records automatically.
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </section>
+                  )}
+
                   <section
                     className="rounded-2xl"
                     style={{
@@ -661,7 +998,10 @@ export function Database() {
                     }}
                   >
                     <div className="flex items-center justify-between gap-3">
-                      <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+                      <h3
+                        className="text-sm font-bold uppercase tracking-wider"
+                        style={{ color: '#ffffff' }}
+                      >
                         Freshness
                       </h3>
 

@@ -3,6 +3,10 @@ import {
   getPersonEnrichment
 } from './living-database-store.js';
 
+import {
+  buildPersonDataQuality
+} from './person-data-quality.js';
+
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -277,6 +281,37 @@ export async function getPersonIntelligence(
       ]
     );
 
+  const duplicateCandidates =
+    await client.query(
+      `
+        SELECT
+          dc.id,
+          dc.person_id_1,
+          dc.person_id_2,
+          dc.match_score,
+          dc.status,
+          dc.match_reasons,
+          dc.created_at
+        FROM duplicate_candidates dc
+        JOIN import_jobs j
+          ON j.id = dc.import_job_id
+        WHERE j.client_id = $1
+          AND (
+            dc.person_id_1 = $2
+            OR dc.person_id_2 = $2
+          )
+        ORDER BY
+          dc.match_score DESC,
+          dc.created_at DESC,
+          dc.id
+        LIMIT 100
+      `,
+      [
+        clientId,
+        personId
+      ]
+    );
+
   const [
     freshness,
     enrichment
@@ -296,6 +331,38 @@ export async function getPersonIntelligence(
       }
     )
   ]);
+
+  const dataQuality =
+    buildPersonDataQuality({
+      person: {
+        full_name: row.full_name,
+        current_title: row.current_title,
+        department: row.department,
+        seniority: row.seniority,
+        contact_city: row.contact_city,
+        contact_country: row.contact_country,
+        linkedin_url: row.linkedin_url
+      },
+
+      contact: {
+        primary_email: row.primary_email,
+        primary_phone: row.primary_phone
+      },
+
+      company: row.company_id
+        ? {
+            name: row.company_name,
+            domain: row.company_domain
+          }
+        : null,
+
+      freshness,
+
+      enrichment,
+
+      duplicateCandidates:
+        duplicateCandidates.rows
+    });
 
   return {
     person: {
@@ -373,6 +440,9 @@ export async function getPersonIntelligence(
     freshness,
 
     enrichment,
+
+    data_quality:
+      dataQuality,
 
     campaigns:
       campaignResult.rows,

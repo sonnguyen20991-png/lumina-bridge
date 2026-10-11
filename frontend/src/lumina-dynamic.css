@@ -5119,3 +5119,29 @@ div[class*="bg-[#111114]"][class*="rounded-2xl"] label:hover {
   border-left: 3px solid rgba(244, 63, 94, 0.55);
   padding-left: 12px;
 }
+
+/* =========================================================
+   PR16 — Contact Intelligence dark surface
+   Keeps the intelligence drawer intentionally dark inside
+   the otherwise bright Premium Intelligence Workspace.
+   ========================================================= */
+
+.lumina-contact-intelligence h2 {
+  color: #ffffff !important;
+}
+
+.lumina-contact-intelligence h3 {
+  color: #f8fafc !important;
+}
+
+.lumina-contact-intelligence .text-\[\#71717a\] {
+  color: #8b9bb1 !important;
+}
+
+.lumina-contact-intelligence .text-\[\#a1a1aa\] {
+  color: #b7c2d0 !important;
+}
+
+.lumina-contact-intelligence .text-\[\#52525b\] {
+  color: #7f8da3 !important;
+}

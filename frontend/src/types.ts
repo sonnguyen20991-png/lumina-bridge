@@ -88,6 +88,32 @@ export interface ContactIntelligence {
     value?: unknown;
     source_name?: string | null;
   }>;
+
+  data_quality?: {
+    completeness?: {
+      present?: string[];
+      missing?: string[];
+      present_count?: number;
+      total_count?: number;
+    };
+    freshness?: {
+      status?: string | null;
+      confidence?: number | null;
+      last_verified_at?: string | null;
+      verification_pending?: boolean;
+    };
+    evidence?: {
+      enrichment_count?: number;
+      verified_enrichment_count?: number;
+    };
+    duplicates?: {
+      candidate_count?: number;
+      pending_count?: number;
+      highest_match_score?: number | null;
+      needs_review?: boolean;
+    };
+    signals?: string[];
+  };
   employment_history?: Array<{
     id: string;
     title?: string | null;
