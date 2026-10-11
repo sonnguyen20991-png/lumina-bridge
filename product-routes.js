@@ -149,7 +149,7 @@ function normalizeFilters(input = {}) {
   return filters;
 }
 
-function interpretInput(rawInput, directFilters = {}) {
+export function interpretInput(rawInput, directFilters = {}) {
   const original = cleanText(rawInput, 3000) || '';
   const filters = normalizeFilters(directFilters);
   const freeText = [];
