@@ -3,6 +3,7 @@ import type {
   CampaignHistoryRecord,
   CampaignParticipant,
   CampaignSummary,
+  CampaignWorkItem,
   ClientOption,
   ContactIntelligence,
   Gate1Response,
@@ -108,6 +109,11 @@ export const gate1Api = {
   getCampaignParticipants: (campaignId: string, offset = 0) =>
     request<CampaignParticipant[]>(
       `/campaigns/${requireUuid(campaignId)}/participants?offset=${offset}`,
+    ),
+
+  getCampaignWorkQueue: (campaignId: string, offset = 0) =>
+    request<CampaignWorkItem[]>(
+      `/campaigns/${requireUuid(campaignId)}/work-queue?offset=${offset}`,
     ),
 
   importListToCampaign: (campaignId: string, listId: string) =>

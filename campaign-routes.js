@@ -1,3 +1,5 @@
+import { buildSdrWorkItem } from './sdr-work-queue.js';
+
 const uuid = v => typeof v === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v);
 const writeRoles = new Set(['owner','admin','manager','member']);
 const stages = new Set(['not_started','contacted','responded','meeting_booked','qualified','closed']);
@@ -64,6 +66,76 @@ export function registerCampaignRoutes(app, pool) {
     const r=await c.query(`SELECT cp.*,cp.updated_at::text AS version,p.full_name,p.current_title,p.contact_country FROM campaign_participations cp JOIN persons p ON p.id=cp.person_id JOIN campaigns c ON c.id=cp.campaign_id WHERE cp.campaign_id=$1 AND c.client_id=$2 ORDER BY cp.created_at,cp.person_id LIMIT 50 OFFSET $3`,[id,req.auth.clientId,offset]);
     res.json({status:'ok',data:r.rows,pagination:{limit:50,offset}});
   }));
+  app.get('/api/v1/campaigns/:id/work-queue',run(async(req,res,c)=>{
+    const id=req.params.id;
+    if(!uuid(id)) return error(res,400,'INVALID_CAMPAIGN_ID');
+
+    const owned=await c.query(
+      'SELECT id FROM campaigns WHERE id=$1 AND client_id=$2',
+      [id,req.auth.clientId]
+    );
+
+    if(!owned.rowCount) return error(res,404,'CAMPAIGN_NOT_FOUND');
+
+    const offset=Math.max(
+      0,
+      Math.min(
+        1000000,
+        Number.parseInt(req.query.offset,10)||0
+      )
+    );
+
+    const r=await c.query(
+      `SELECT
+        cp.*,
+        cp.updated_at::text AS version,
+        p.full_name,
+        p.current_title,
+        p.contact_country,
+        company.name AS company_name
+       FROM campaign_participations cp
+       JOIN persons p
+         ON p.id=cp.person_id
+       JOIN campaigns campaign
+         ON campaign.id=cp.campaign_id
+       LEFT JOIN LATERAL (
+         SELECT c.canonical_name AS name
+         FROM employments e
+         JOIN companies c
+           ON c.id=e.company_id
+         WHERE e.person_id=p.id
+         ORDER BY
+           e.is_current DESC,
+           e.started_at DESC NULLS LAST,
+           e.id
+         LIMIT 1
+       ) company ON TRUE
+       WHERE cp.campaign_id=$1
+         AND campaign.client_id=$2
+       ORDER BY
+         cp.updated_at DESC,
+         cp.person_id
+       LIMIT 50 OFFSET $3`,
+      [id,req.auth.clientId,offset]
+    );
+
+    const data=r.rows.map(row=>({
+      ...row,
+      ...buildSdrWorkItem({
+        participation:row
+      })
+    }));
+
+    res.json({
+      status:'ok',
+      data,
+      pagination:{
+        limit:50,
+        offset
+      }
+    });
+  }));
+
   app.post('/api/v1/campaigns/:id/participants/:personId',run(async(req,res,c)=>{
     const id=req.params.id,p=req.params.personId,b=req.body;
     if(!uuid(id)||!uuid(p)||!validateParticipation(b)) return error(res,400,'INVALID_PARTICIPATION_UPDATE');
