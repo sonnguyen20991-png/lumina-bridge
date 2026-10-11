@@ -331,44 +331,56 @@ export function Campaigns() {
               {workQueue.map((item) => (
                 <article
                   key={item.person_id}
-                  className="rounded-xl border border-[#27272a] bg-[#141419] p-4 transition hover:border-[#4f46e5]/60"
+                  className="rounded-xl border border-[#30303a] bg-[#16161d] p-5 shadow-sm transition hover:border-indigo-500/50 hover:bg-[#191922]"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div className="min-w-0">
-                      <h3 className="font-semibold text-white">
+                      <h3 className="text-base font-semibold text-[#f4f4f5]">
                         {item.full_name}
                       </h3>
 
-                      <p className="mt-1 text-sm text-[#a1a1aa]">
+                      <p className="mt-1 text-sm text-[#b8c0cf]">
                         {[item.current_title, item.company_name, item.contact_country]
                           .filter(Boolean)
                           .join(' · ') || 'Contact context unavailable'}
                       </p>
                     </div>
 
-                    <div className="text-right">
-                      <p className="text-xs uppercase tracking-[0.14em] text-[#71717a]">
+                    <div className="min-w-[150px] text-right">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#8b93a7]">
                         Next action
                       </p>
 
-                      <p className={`mt-1 font-semibold ${
-                        item.follow_up_overdue
-                          ? 'text-amber-200'
-                          : item.actionable
-                            ? 'text-indigo-200'
-                            : 'text-[#a1a1aa]'
-                      }`}>
+                      <span
+                        className={`mt-2 inline-flex items-center rounded-full border px-3 py-1.5 text-xs font-bold capitalize shadow-sm ${
+                          item.next_action === 'start_outreach'
+                            ? 'border-indigo-400/40 bg-indigo-500/15 text-indigo-200'
+                            : item.next_action === 'follow_up'
+                              ? 'border-amber-400/40 bg-amber-500/15 text-amber-200'
+                              : item.next_action === 'review_response'
+                                ? 'border-cyan-400/40 bg-cyan-500/15 text-cyan-200'
+                                : item.next_action === 'prepare_meeting'
+                                  ? 'border-violet-400/40 bg-violet-500/15 text-violet-200'
+                                  : item.next_action === 'progress_opportunity'
+                                    ? 'border-emerald-400/40 bg-emerald-500/15 text-emerald-200'
+                                    : item.next_action === 'do_not_pursue'
+                                      ? 'border-rose-400/40 bg-rose-500/15 text-rose-200'
+                                      : item.next_action === 'complete'
+                                        ? 'border-green-400/40 bg-green-500/15 text-green-200'
+                                        : 'border-zinc-500/40 bg-zinc-500/10 text-zinc-300'
+                        }`}
+                      >
                         {item.next_action.replaceAll('_', ' ')}
-                      </p>
+                      </span>
                     </div>
                   </div>
 
                   <div className="mt-4 flex flex-wrap gap-2 text-xs">
-                    <span className="rounded-lg border border-[#3f3f46] px-2.5 py-1 text-[#d4d4d8]">
+                    <span className="rounded-lg border border-[#454552] bg-[#1c1c24] px-2.5 py-1 text-[#e4e4e7]">
                       Stage: {(item.stage || 'unknown').replaceAll('_', ' ')}
                     </span>
 
-                    <span className="rounded-lg border border-[#3f3f46] px-2.5 py-1 text-[#d4d4d8]">
+                    <span className="rounded-lg border border-[#454552] bg-[#1c1c24] px-2.5 py-1 text-[#e4e4e7]">
                       Status: {(item.status || 'unknown').replaceAll('_', ' ')}
                     </span>
 
@@ -376,7 +388,7 @@ export function Campaigns() {
                       <span className={`rounded-lg border px-2.5 py-1 ${
                         item.follow_up_overdue
                           ? 'border-amber-500/30 bg-amber-500/10 text-amber-200'
-                          : 'border-[#3f3f46] text-[#d4d4d8]'
+                          : 'border-[#454552] bg-[#1c1c24] text-[#e4e4e7]'
                       }`}>
                         Follow-up {item.follow_up_overdue ? 'overdue' : 'due'} ·{' '}
                         {new Date(item.follow_up_due_at).toLocaleString()}
@@ -389,7 +401,7 @@ export function Campaigns() {
                       {item.reasons.map((reason) => (
                         <span
                           key={reason}
-                          className="rounded-md bg-[#1c1c22] px-2 py-1 text-[11px] text-[#8b9bb1]"
+                          className="rounded-md border border-[#30303a] bg-[#20202a] px-2.5 py-1 text-[11px] font-medium text-[#b7c0d4]"
                         >
                           {reason.replaceAll('_', ' ')}
                         </span>
