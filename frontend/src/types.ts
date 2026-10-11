@@ -2,7 +2,30 @@ export type View = 'builder' | 'home' | 'lists' | 'contacts' | 'clients' | 'camp
 export type Query = { q: string; filters: Record<string, string> };
 export interface Gate1Session { principal_id: string; email: string; client_id: string; client_name: string; role: string; provider: string }
 export interface ClientOption { id: string; name: string; role: string }
-export interface InterpretData { original_input: string; q: string | null; filters: Record<string,string>; understood_as: string; interpreter_version: string }
+export interface InterpretCorrection {
+  type: 'field_alias' | 'field_typo';
+  original: string;
+  corrected_to: string;
+}
+
+export interface InterpretEntity {
+  field: string;
+  value: string;
+}
+
+export interface InterpretData {
+  original_input: string | null;
+  q: string | null;
+  filters: Record<string,string>;
+  understood_as: string;
+  interpreter_version: string;
+  confidence?: number;
+  intent?: 'empty' | 'structured_search' | 'free_text_search' | 'hybrid_search' | string;
+  recognized_entities?: InterpretEntity[];
+  corrections?: InterpretCorrection[];
+  ambiguities?: string[];
+  unsupported_intents?: string[];
+}
 export interface Gate1Response<T> { status: 'ok'; data: T; count?: number; member_count?: number; pagination?: {limit:number;offset:number}; interpreted_query?: Query }
 export interface Person {
   id: string;
