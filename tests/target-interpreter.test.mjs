@@ -140,3 +140,64 @@ test('empty interpretation exposes zero-confidence empty intent', () => {
   assert.equal(result.confidence, 0);
   assert.deepEqual(result.recognized_entities, []);
 });
+
+
+test('field typo is surfaced as an explicit correction', () => {
+  const result = interpretInput('titel: CTO');
+
+  assert.deepEqual(result.filters, {title: 'CTO'});
+  assert.deepEqual(result.corrections, [
+    {
+      type: 'field_typo',
+      original: 'titel',
+      corrected_to: 'title'
+    }
+  ]);
+});
+
+test('known field alias is surfaced as an explicit normalization', () => {
+  const result = interpretInput('sector: Telecommunications');
+
+  assert.deepEqual(result.filters, {
+    industry: 'Telecommunications'
+  });
+  assert.deepEqual(result.corrections, [
+    {
+      type: 'field_alias',
+      original: 'sector',
+      corrected_to: 'industry'
+    }
+  ]);
+});
+
+test('direct-filter aliases also produce correction metadata', () => {
+  const result = interpretInput('', {
+    job_title: 'CEO',
+    contact_country: 'Singapore'
+  });
+
+  assert.deepEqual(result.corrections, [
+    {
+      type: 'field_alias',
+      original: 'job_title',
+      corrected_to: 'title'
+    },
+    {
+      type: 'field_alias',
+      original: 'contact_country',
+      corrected_to: 'country'
+    }
+  ]);
+});
+
+test('unknown explicit field remains free text and reports ambiguity', () => {
+  const result = interpretInput('companysize: 500 employees');
+
+  assert.equal(result.q, 'companysize: 500 employees');
+  assert.deepEqual(result.filters, {});
+  assert.ok(
+    result.ambiguities.some(message =>
+      message.includes('Could not map "companysize"')
+    )
+  );
+});
