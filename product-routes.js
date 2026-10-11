@@ -3,6 +3,7 @@ import ExcelJS from 'exceljs';
 const SEARCH_LIMIT_MAX = 100;
 const FREEZE_MAX_ROWS = 25000;
 const EXPORT_MAX_ROWS = 25000;
+const INTERPRETER_VERSION = 'r18-intelligence-v3';
 
 const STANDARD_EXPORT_HEADERS = [
   'Contact Full Name',
@@ -209,12 +210,49 @@ export function interpretInput(rawInput, directFilters = {}) {
     parts.push(`${field}: ${value}`);
   }
 
+  const filterEntries = Object.entries(filters);
+  const recognizedEntities = filterEntries.map(([field, value]) => ({
+    field,
+    value
+  }));
+
+  let intent = 'empty';
+  let confidence = 0;
+
+  if (q && filterEntries.length) {
+    intent = 'hybrid_search';
+    confidence = 0.85;
+  } else if (filterEntries.length) {
+    intent = 'structured_search';
+    confidence = 0.98;
+  } else if (q) {
+    intent = 'free_text_search';
+    confidence = 0.60;
+  }
+
+  const ambiguities = [];
+  if (q && !filterEntries.length) {
+    ambiguities.push(
+      'The request could not be mapped to supported structured filters, so it remains free text.'
+    );
+  } else if (q && filterEntries.length) {
+    ambiguities.push(
+      'Some terms remain free text because they were not mapped to supported structured filters.'
+    );
+  }
+
   return {
     original_input: original || null,
     q,
     filters,
     understood_as: parts.length ? parts.join(' | ') : 'No search terms detected',
-    interpreter_version: 'r17-deterministic-v2'
+    interpreter_version: INTERPRETER_VERSION,
+    confidence,
+    intent,
+    recognized_entities: recognizedEntities,
+    corrections: [],
+    ambiguities,
+    unsupported_intents: []
   };
 }
 
@@ -672,7 +710,7 @@ export function registerProductRoutes(app, pool) {
           name,
           cleanText(req.body?.original_input, 3000),
           JSON.stringify(interpreted),
-          JSON.stringify({ interpreter_version: 'r17-deterministic-v2' })
+          JSON.stringify({ interpreter_version: INTERPRETER_VERSION })
         ]
       );
       await insertAudit(client, {
