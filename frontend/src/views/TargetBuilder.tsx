@@ -106,7 +106,7 @@ export function TargetBuilder({onOpenLists}:{onOpenLists:()=>void}) {
           <div className="lumina-target-intelligence-summary">
             {typeof pending.confidence==='number'&&<div className="lumina-target-intelligence-stat"><span>Confidence</span><strong>{confidencePercent(pending.confidence)}%</strong></div>}
             {pending.intent&&<div className="lumina-target-intelligence-stat"><span>Intent</span><strong>{intentLabel(pending.intent)}</strong></div>}
-            {!!pending.recognized_entities?.length&&<div className="lumina-target-intelligence-stat"><span>Recognized</span><strong>{pending.recognized_entities.length} criteria</strong></div>}
+            {!!pending.recognized_entities?.length&&<div className="lumina-target-intelligence-stat"><span>Recognized</span><strong>{pending.recognized_entities.length} {pending.recognized_entities.length===1?'criterion':'criteria'}</strong></div>}
           </div>
           {!!pending.corrections?.length&&<div className="lumina-target-intelligence-group lumina-target-intelligence-corrections"><span className="lumina-target-intelligence-label">Normalized</span><div className="lumina-target-intelligence-items">{pending.corrections.map((item,index)=><span key={`${item.type}-${item.original}-${index}`} className="lumina-target-intelligence-chip">{item.original} → {item.corrected_to}</span>)}</div></div>}
           {!!pending.ambiguities?.length&&<div className="lumina-target-intelligence-group lumina-target-intelligence-ambiguities"><span className="lumina-target-intelligence-label">Needs review</span>{pending.ambiguities.map((item,index)=><p key={index}>{item}</p>)}</div>}
