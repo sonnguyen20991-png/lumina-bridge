@@ -166,6 +166,15 @@ export interface CampaignParticipant {
   version: string;
 }
 
+export interface CampaignWorkItem extends CampaignParticipant {
+  company_name?: string | null;
+  next_action: string;
+  actionable: boolean;
+  follow_up_due_at?: string | null;
+  follow_up_overdue: boolean;
+  reasons: string[];
+}
+
 export interface CampaignHistoryRecord {
   campaign_name: string;
   stage?: string | null;

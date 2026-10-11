@@ -6,6 +6,7 @@ import type {
   CampaignHistoryRecord,
   CampaignParticipant,
   CampaignSummary,
+  CampaignWorkItem,
   List,
 } from '../types';
 
@@ -43,6 +44,7 @@ export function Campaigns() {
   );
 
   const [participants, setParticipants] = useState<CampaignParticipant[]>([]);
+  const [workQueue, setWorkQueue] = useState<CampaignWorkItem[]>([]);
   const [offset, setOffset] = useState(0);
 
   const [editor, setEditor] = useState<CampaignParticipant | null>(null);
@@ -69,6 +71,11 @@ export function Campaigns() {
   async function loadParticipants(id: string, nextOffset: number) {
     const result = await gate1Api.getCampaignParticipants(id, nextOffset);
     setParticipants(result.data);
+  }
+
+  async function loadWorkQueue(id: string, nextOffset: number) {
+    const result = await gate1Api.getCampaignWorkQueue(id, nextOffset);
+    setWorkQueue(result.data);
   }
 
   async function run(operation: () => Promise<void>) {
@@ -99,7 +106,10 @@ export function Campaigns() {
     await loadWorkspace();
 
     if (campaignId) {
-      await loadParticipants(campaignId, offset);
+      await Promise.all([
+        loadParticipants(campaignId, offset),
+        loadWorkQueue(campaignId, offset),
+      ]);
     }
 
     setEditor(null);
@@ -216,9 +226,15 @@ export function Campaigns() {
             setEditor(null);
             setHistoryName('');
             setParticipants([]);
+            setWorkQueue([]);
 
             if (id) {
-              void run(() => loadParticipants(id, 0));
+              void run(async () => {
+                await Promise.all([
+                  loadParticipants(id, 0),
+                  loadWorkQueue(id, 0),
+                ]);
+              });
             }
           }}
         >
@@ -261,7 +277,10 @@ export function Campaigns() {
                 );
 
                 await loadWorkspace();
-                await loadParticipants(campaignId, offset);
+                await Promise.all([
+                  loadParticipants(campaignId, offset),
+                  loadWorkQueue(campaignId, offset),
+                ]);
 
                 setStatus(
                   `${result.data.added} contacts added. Existing progress was preserved.`,
@@ -276,6 +295,118 @@ export function Campaigns() {
 
       {campaignId && (
         <>
+          <section className="lumina-sdr-work-queue space-y-4 rounded-2xl border border-[#27272a] bg-[#0d0d10] p-6">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-indigo-300">
+                  SDR Intelligence
+                </p>
+
+                <h2 className="mt-1 text-xl font-bold text-white">
+                  Work Queue
+                </h2>
+
+                <p className="mt-1 max-w-2xl text-sm text-[#a1a1aa]">
+                  Backend-derived next actions from the contact's current
+                  campaign state. Lumina does not send outreach automatically.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-2 text-xs">
+                <span className="rounded-full border border-[#3f3f46] px-3 py-1.5 text-[#d4d4d8]">
+                  {workQueue.length} loaded
+                </span>
+
+                <span className="rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3 py-1.5 text-indigo-200">
+                  {workQueue.filter((item) => item.actionable).length} actionable
+                </span>
+
+                <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-amber-200">
+                  {workQueue.filter((item) => item.follow_up_overdue).length} overdue
+                </span>
+              </div>
+            </div>
+
+            <div className="grid gap-3">
+              {workQueue.map((item) => (
+                <article
+                  key={item.person_id}
+                  className="rounded-xl border border-[#27272a] bg-[#141419] p-4 transition hover:border-[#4f46e5]/60"
+                >
+                  <div className="flex flex-wrap items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <h3 className="font-semibold text-white">
+                        {item.full_name}
+                      </h3>
+
+                      <p className="mt-1 text-sm text-[#a1a1aa]">
+                        {[item.current_title, item.company_name, item.contact_country]
+                          .filter(Boolean)
+                          .join(' · ') || 'Contact context unavailable'}
+                      </p>
+                    </div>
+
+                    <div className="text-right">
+                      <p className="text-xs uppercase tracking-[0.14em] text-[#71717a]">
+                        Next action
+                      </p>
+
+                      <p className={`mt-1 font-semibold ${
+                        item.follow_up_overdue
+                          ? 'text-amber-200'
+                          : item.actionable
+                            ? 'text-indigo-200'
+                            : 'text-[#a1a1aa]'
+                      }`}>
+                        {item.next_action.replaceAll('_', ' ')}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 flex flex-wrap gap-2 text-xs">
+                    <span className="rounded-lg border border-[#3f3f46] px-2.5 py-1 text-[#d4d4d8]">
+                      Stage: {(item.stage || 'unknown').replaceAll('_', ' ')}
+                    </span>
+
+                    <span className="rounded-lg border border-[#3f3f46] px-2.5 py-1 text-[#d4d4d8]">
+                      Status: {(item.status || 'unknown').replaceAll('_', ' ')}
+                    </span>
+
+                    {item.follow_up_due_at && (
+                      <span className={`rounded-lg border px-2.5 py-1 ${
+                        item.follow_up_overdue
+                          ? 'border-amber-500/30 bg-amber-500/10 text-amber-200'
+                          : 'border-[#3f3f46] text-[#d4d4d8]'
+                      }`}>
+                        Follow-up {item.follow_up_overdue ? 'overdue' : 'due'} ·{' '}
+                        {new Date(item.follow_up_due_at).toLocaleString()}
+                      </span>
+                    )}
+                  </div>
+
+                  {!!item.reasons.length && (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {item.reasons.map((reason) => (
+                        <span
+                          key={reason}
+                          className="rounded-md bg-[#1c1c22] px-2 py-1 text-[11px] text-[#8b9bb1]"
+                        >
+                          {reason.replaceAll('_', ' ')}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </article>
+              ))}
+
+              {!workQueue.length && (
+                <div className="rounded-xl border border-dashed border-[#3f3f46] p-8 text-center text-sm text-[#71717a]">
+                  No SDR work items on this page.
+                </div>
+              )}
+            </div>
+          </section>
+
           <table className="lumina-campaign-table w-full text-left text-sm">
             <thead>
               <tr>
@@ -363,7 +494,10 @@ export function Campaigns() {
                 void run(async () => {
                   const nextOffset = offset - 50;
 
-                  await loadParticipants(campaignId, nextOffset);
+                  await Promise.all([
+                    loadParticipants(campaignId, nextOffset),
+                    loadWorkQueue(campaignId, nextOffset),
+                  ]);
                   setOffset(nextOffset);
                   setEditor(null);
                 });
@@ -381,7 +515,10 @@ export function Campaigns() {
                 void run(async () => {
                   const nextOffset = offset + 50;
 
-                  await loadParticipants(campaignId, nextOffset);
+                  await Promise.all([
+                    loadParticipants(campaignId, nextOffset),
+                    loadWorkQueue(campaignId, nextOffset),
+                  ]);
                   setOffset(nextOffset);
                   setEditor(null);
                 });
@@ -416,7 +553,10 @@ export function Campaigns() {
               setEditor(null);
               setHistoryName('');
 
-              await loadParticipants(campaignId, offset);
+              await Promise.all([
+                loadParticipants(campaignId, offset),
+                loadWorkQueue(campaignId, offset),
+              ]);
               await loadWorkspace();
 
               setStatus(
