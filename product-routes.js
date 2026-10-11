@@ -3,6 +3,7 @@ import ExcelJS from 'exceljs';
 const SEARCH_LIMIT_MAX = 100;
 const FREEZE_MAX_ROWS = 25000;
 const EXPORT_MAX_ROWS = 25000;
+const INTERPRETER_VERSION = 'r18-intelligence-v3';
 
 const STANDARD_EXPORT_HEADERS = [
   'Contact Full Name',
@@ -108,18 +109,24 @@ function levenshtein(a, b) {
   return dp[x.length][y.length];
 }
 
-function canonicalField(rawKey) {
-  const key = normalizeKey(rawKey);
-  if (!key) return null;
+function resolveField(rawKey) {
+  const raw = String(rawKey || '').trim();
+  const key = normalizeKey(raw);
+  if (!key) return { field: null, kind: 'unresolved', raw };
 
   for (const [canonical, aliases] of Object.entries(FIELD_ALIASES)) {
-    const candidates = [canonical, ...aliases];
-    if (candidates.some(candidate => normalizeKey(candidate) === key)) {
-      return canonical;
+    if (normalizeKey(canonical) === key) {
+      return { field: canonical, kind: 'exact', raw };
+    }
+
+    const alias = aliases.find(candidate => normalizeKey(candidate) === key);
+    if (alias) {
+      return { field: canonical, kind: 'alias', raw, matched: alias };
     }
   }
 
   let best = null;
+  let bestCandidate = null;
   let bestDistance = Infinity;
 
   for (const [canonical, aliases] of Object.entries(FIELD_ALIASES)) {
@@ -128,30 +135,69 @@ function canonicalField(rawKey) {
       if (distance < bestDistance) {
         bestDistance = distance;
         best = canonical;
+        bestCandidate = candidate;
       }
     }
   }
 
   const tolerance = key.length <= 5 ? 1 : 2;
-  return bestDistance <= tolerance ? best : null;
+  if (bestDistance <= tolerance) {
+    return {
+      field: best,
+      kind: 'correction',
+      raw,
+      matched: bestCandidate,
+      distance: bestDistance
+    };
+  }
+
+  return { field: null, kind: 'unresolved', raw };
 }
 
-function normalizeFilters(input = {}) {
+function canonicalField(rawKey) {
+  return resolveField(rawKey).field;
+}
+
+function recordFieldCorrection(corrections, resolution) {
+  if (!Array.isArray(corrections) || !resolution?.field) return;
+
+  if (resolution.kind === 'alias') {
+    corrections.push({
+      type: 'field_alias',
+      original: resolution.raw,
+      corrected_to: resolution.field
+    });
+  } else if (resolution.kind === 'correction') {
+    corrections.push({
+      type: 'field_typo',
+      original: resolution.raw,
+      corrected_to: resolution.field
+    });
+  }
+}
+
+function normalizeFilters(input = {}, corrections = null) {
   const filters = {};
   if (!input || typeof input !== 'object' || Array.isArray(input)) return filters;
 
   for (const [rawKey, rawValue] of Object.entries(input)) {
-    const field = canonicalField(rawKey);
+    const resolution = resolveField(rawKey);
     const value = cleanText(rawValue, 500);
-    if (field && value) filters[field] = value;
+
+    if (resolution.field && value) {
+      filters[resolution.field] = value;
+      recordFieldCorrection(corrections, resolution);
+    }
   }
 
   return filters;
 }
 
-function interpretInput(rawInput, directFilters = {}) {
+export function interpretInput(rawInput, directFilters = {}) {
   const original = cleanText(rawInput, 3000) || '';
-  const filters = normalizeFilters(directFilters);
+  const corrections = [];
+  const parserAmbiguities = [];
+  const filters = normalizeFilters(directFilters, corrections);
   const freeText = [];
 
   // Recognize an unambiguous, standalone country query.
@@ -181,20 +227,28 @@ function interpretInput(rawInput, directFilters = {}) {
   for (const chunk of chunks) {
     const explicit = chunk.match(/^\s*([^:=]{2,40})\s*[:=]\s*(.+?)\s*$/);
     if (explicit) {
-      const field = canonicalField(explicit[1]);
+      const resolution = resolveField(explicit[1]);
       const value = cleanText(explicit[2], 500);
-      if (field && value) {
-        filters[field] = value;
+      if (resolution.field && value) {
+        filters[resolution.field] = value;
+        recordFieldCorrection(corrections, resolution);
         continue;
+      }
+
+      if (value) {
+        parserAmbiguities.push(
+          `Could not map "${explicit[1].trim()}" to a supported filter.`
+        );
       }
     }
 
     const prefix = chunk.match(/^\s*([a-zA-Z_\- ]{2,30})\s+(.+?)\s*$/);
     if (prefix) {
-      const field = canonicalField(prefix[1]);
+      const resolution = resolveField(prefix[1]);
       const value = cleanText(prefix[2], 500);
-      if (field && value) {
-        filters[field] = value;
+      if (resolution.field && value) {
+        filters[resolution.field] = value;
+        recordFieldCorrection(corrections, resolution);
         continue;
       }
     }
@@ -209,12 +263,49 @@ function interpretInput(rawInput, directFilters = {}) {
     parts.push(`${field}: ${value}`);
   }
 
+  const filterEntries = Object.entries(filters);
+  const recognizedEntities = filterEntries.map(([field, value]) => ({
+    field,
+    value
+  }));
+
+  let intent = 'empty';
+  let confidence = 0;
+
+  if (q && filterEntries.length) {
+    intent = 'hybrid_search';
+    confidence = 0.85;
+  } else if (filterEntries.length) {
+    intent = 'structured_search';
+    confidence = 0.98;
+  } else if (q) {
+    intent = 'free_text_search';
+    confidence = 0.60;
+  }
+
+  const ambiguities = [...parserAmbiguities];
+  if (q && !filterEntries.length) {
+    ambiguities.push(
+      'The request could not be mapped to supported structured filters, so it remains free text.'
+    );
+  } else if (q && filterEntries.length) {
+    ambiguities.push(
+      'Some terms remain free text because they were not mapped to supported structured filters.'
+    );
+  }
+
   return {
     original_input: original || null,
     q,
     filters,
     understood_as: parts.length ? parts.join(' | ') : 'No search terms detected',
-    interpreter_version: 'r17-deterministic-v2'
+    interpreter_version: INTERPRETER_VERSION,
+    confidence,
+    intent,
+    recognized_entities: recognizedEntities,
+    corrections,
+    ambiguities,
+    unsupported_intents: []
   };
 }
 
@@ -672,7 +763,7 @@ export function registerProductRoutes(app, pool) {
           name,
           cleanText(req.body?.original_input, 3000),
           JSON.stringify(interpreted),
-          JSON.stringify({ interpreter_version: 'r17-deterministic-v2' })
+          JSON.stringify({ interpreter_version: INTERPRETER_VERSION })
         ]
       );
       await insertAudit(client, {

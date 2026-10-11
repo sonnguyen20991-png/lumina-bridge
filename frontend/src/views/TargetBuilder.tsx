@@ -84,6 +84,14 @@ export function TargetBuilder({onOpenLists}:{onOpenLists:()=>void}) {
   }
   function openSave(mode:'target'|'list'){setSaveMode(mode);setName('');setNotice('');setError('');}
   function updateFilter(key:string,value:string){setDraft(previous=>({...previous,filters:{...previous.filters,[key]:value}}));}
+  function confidencePercent(value:number|undefined){return typeof value==='number'?Math.round(value*100):null;}
+  function intentLabel(value:string|undefined){
+    if(value==='structured_search')return 'Structured search';
+    if(value==='hybrid_search')return 'Hybrid search';
+    if(value==='free_text_search')return 'Free-text search';
+    if(value==='empty')return 'Empty query';
+    return value?value.replaceAll('_',' '):'';
+  }
   return <div className="lumina-target-builder flex flex-col gap-8 animate-in pb-20">
     <section className="lumina-target-query-section space-y-4">
       <form className="lumina-target-query relative" onSubmit={e=>{e.preventDefault();void interpret();}}>
@@ -93,7 +101,17 @@ export function TargetBuilder({onOpenLists}:{onOpenLists:()=>void}) {
       </form>
       <p className="lumina-target-helper text-xs text-[#71717a]">Search uses text and supported filters. Persona expansion, campaign fit, outreach history, and company size are not available in this release.</p>
       {pending&&<div className="lumina-target-understood bg-[#0d0d0f] border border-indigo-500/20 rounded-2xl p-6 space-y-5">
-        <div className="flex flex-wrap justify-between items-center gap-4"><div><h2 className="text-xs font-bold text-indigo-400 uppercase tracking-widest">Understood As</h2><p className="text-white mt-2">{editing?'Review your edited search below.':pending.understood_as}</p></div><div className="flex gap-2"><button className={button} disabled={!!busy} onClick={()=>{setPending(null);setEditing(false);}}>Cancel</button><button className={button} disabled={!!busy} onClick={()=>setEditing(!editing)}>{editing?'Close Editor':'Edit'}</button><button className={primary} disabled={!!busy} onClick={()=>void search(draft,pending.original_input)}>Apply & Search</button></div></div>
+        <div className="flex flex-wrap justify-between items-center gap-4"><div><h2 className="text-xs font-bold text-indigo-400 uppercase tracking-widest">Understood As</h2><p className="text-white mt-2">{editing?'Review your edited search below.':pending.understood_as}</p></div><div className="flex gap-2"><button className={button} disabled={!!busy} onClick={()=>{setPending(null);setEditing(false);}}>Cancel</button><button className={button} disabled={!!busy} onClick={()=>setEditing(!editing)}>{editing?'Close Editor':'Edit'}</button><button className={primary} disabled={!!busy} onClick={()=>void search(draft,pending.original_input||'')}>Apply & Search</button></div></div>
+        {!editing&&(typeof pending.confidence==='number'||pending.intent||pending.corrections?.length||pending.ambiguities?.length||pending.unsupported_intents?.length)&&<div className="lumina-target-intelligence">
+          <div className="lumina-target-intelligence-summary">
+            {typeof pending.confidence==='number'&&<div className="lumina-target-intelligence-stat"><span>Confidence</span><strong>{confidencePercent(pending.confidence)}%</strong></div>}
+            {pending.intent&&<div className="lumina-target-intelligence-stat"><span>Intent</span><strong>{intentLabel(pending.intent)}</strong></div>}
+            {!!pending.recognized_entities?.length&&<div className="lumina-target-intelligence-stat"><span>Recognized</span><strong>{pending.recognized_entities.length} {pending.recognized_entities.length===1?'criterion':'criteria'}</strong></div>}
+          </div>
+          {!!pending.corrections?.length&&<div className="lumina-target-intelligence-group lumina-target-intelligence-corrections"><span className="lumina-target-intelligence-label">Normalized</span><div className="lumina-target-intelligence-items">{pending.corrections.map((item,index)=><span key={`${item.type}-${item.original}-${index}`} className="lumina-target-intelligence-chip">{item.original} → {item.corrected_to}</span>)}</div></div>}
+          {!!pending.ambiguities?.length&&<div className="lumina-target-intelligence-group lumina-target-intelligence-ambiguities"><span className="lumina-target-intelligence-label">Needs review</span>{pending.ambiguities.map((item,index)=><p key={index}>{item}</p>)}</div>}
+          {!!pending.unsupported_intents?.length&&<div className="lumina-target-intelligence-group lumina-target-intelligence-unsupported"><span className="lumina-target-intelligence-label">Not supported yet</span>{pending.unsupported_intents.map((item,index)=><p key={index}>{item}</p>)}</div>}
+        </div>}
         {editing?<div className="grid grid-cols-1 md:grid-cols-3 gap-4"><label className="text-xs text-[#a1a1aa] md:col-span-3">Search text<input aria-label="Search text" maxLength={1000} value={draft.q} onChange={e=>setDraft({...draft,q:e.target.value})} className="mt-2 w-full bg-[#111114] border border-[#27272a] rounded-lg p-3 text-white"/></label>{Object.entries(FILTER_LABELS).filter(([key])=>key!=='icp').map(([key,label])=><label key={key} className="text-xs text-[#a1a1aa]">{label}<input aria-label={label} maxLength={500} value={draft.filters[key]||''} onChange={e=>updateFilter(key,e.target.value)} className="mt-2 w-full bg-[#111114] border border-[#27272a] rounded-lg p-3 text-white"/></label>)}</div>:<div className="flex flex-wrap gap-2">{draft.q&&<span className="px-3 py-2 bg-[#111114] rounded-lg text-sm">Search: {draft.q}</span>}{Object.entries(draft.filters).filter(([,value])=>value.trim()).map(([key,value])=><span key={key} className="px-3 py-2 bg-[#111114] border border-[#1c1c1f] rounded-lg text-sm"><span className="text-[#71717a]">{FILTER_LABELS[key as keyof typeof FILTER_LABELS]}: </span>{key==='icp'?'Selected ICP':value}</span>)}</div>}
       </div>}
     </section>
